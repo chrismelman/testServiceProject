@@ -1,4 +1,5 @@
 application testServicesProject
+imports webservices/services/interface
 	define page root(){ 
 		}
 	
@@ -23,6 +24,11 @@ application testServicesProject
 	entity Place {
 		name :: String
 	}
+	
+	derive webservices for Project , with nameproperty name
+	derive webservices for User , with nameproperty name
+
+	 
 	init {
 	 	var project1 := Project{id := "7c17fc80-719f-45af-9dfc-c65ba2a72a08".parseUUID(),  name := "test1"};
 	  	var project2 := Project{id := "949a3d74-51fe-45d8-92ea-def66dc49e08".parseUUID(), name := "test2"};

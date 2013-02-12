@@ -1,0 +1,94 @@
+module webservices::mobl::mapper
+  import webservices :: mobl :: model
+  function TopLevelEntities_Mapper ( json : JSON ) {
+    foreach ( topent : JSON in json . result ) {
+      if ( topent . name == "Project" )
+      {
+        foreach ( ent : JSON in topent . value ) {
+          if ( ! Project . load ( ent . id ) )
+          {
+            Project . fromSelectJSON ( ent );
+          }
+        }
+      }
+      if ( topent . name == "User" )
+      {
+        foreach ( ent : JSON in topent . value ) {
+          if ( ! Person . load ( ent . id ) )
+          {
+            Person . fromSelectJSON ( ent );
+          }
+        }
+      }
+    }
+  }
+  function errorMapper ( json : JSON ) : JSON {
+    if ( json . errors )
+    {
+      return json . errors;
+    }
+  }
+  function timeStampMapper ( json : JSON ) : Num {
+    if ( json . errors && json . errors . length > 0 )
+    {
+      log(json.errors);
+    }
+    else
+    {
+      return json . result;
+    }
+  }
+  function voidMapper ( json : JSON ) : void {
+    if ( json . errors && json . errors . length > 0 )
+    {
+      log(json.errors);
+    }
+  }
+  function ProjectMapper ( json : JSON ) {
+    if ( json . errors && json . errors . length > 0 )
+    {
+      log(json.errors);
+    }
+    else
+    {
+      foreach ( ent : JSON in json . result ) {
+        Project . fromSelectJSON ( ent );
+      }
+    }
+  }
+  function IssueMapper ( json : JSON ) {
+    if ( json . errors && json . errors . length > 0 )
+    {
+      log(json.errors);
+    }
+    else
+    {
+      foreach ( ent : JSON in json . result ) {
+        Issue . fromSelectJSON ( ent );
+      }
+    }
+  }
+  function PersonMapper ( json : JSON ) {
+    if ( json . errors && json . errors . length > 0 )
+    {
+      log(json.errors);
+    }
+    else
+    {
+      foreach ( ent : JSON in json . result ) {
+        Person . fromSelectJSON ( ent );
+      }
+    }
+  }
+  function PlaceMapper ( json : JSON ) {
+    if ( json . errors && json . errors . length > 0 )
+    {
+      log(json.errors);
+    }
+    else
+    {
+      foreach ( ent : JSON in json . result ) {
+        Place . fromSelectJSON ( ent );
+      }
+    }
+  }

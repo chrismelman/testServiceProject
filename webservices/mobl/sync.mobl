@@ -1,0 +1,278 @@
+module webservices::mobl::sync
+  import webservices :: mobl :: mapper
+  import webservices :: mobl :: model
+  import webservices :: mobl :: unsync
+  import webservices :: mobl :: simpleView
+  service Sync {
+    resource sendNew ( arg : [ JSON ] ) : JSON {
+      uri="webservice/syncNewObjects"
+      method="PUT"
+      data=JSON . stringify ( arg )
+      mapper=errorMapper
+    }
+    resource sendEdits ( arg : [ JSON ] ) : JSON {
+      uri="webservice/syncDirtyObjects"
+      method="PUT"
+      data=JSON . stringify ( arg )
+      mapper=errorMapper
+    }
+    resource getTimeStamp ( ) : Num {
+      uri="webservice/getTimeStamp"
+      method="PUT"
+      mapper=timeStampMapper
+    }
+    resource syncPlace ( arg : [ JSON ] ) : void {
+      uri="webservice/syncPlace"
+      method="PUT"
+      data=JSON . stringify ( arg )
+      mapper=PlaceMapper
+    }
+    resource syncPerson ( arg : [ JSON ] ) : void {
+      uri="webservice/syncPerson"
+      method="PUT"
+      data=JSON . stringify ( arg )
+      mapper=PersonMapper
+    }
+    resource syncIssue ( arg : [ JSON ] ) : void {
+      uri="webservice/syncIssue"
+      method="PUT"
+      data=JSON . stringify ( arg )
+      mapper=IssueMapper
+    }
+    resource syncProject ( arg : [ JSON ] ) : void {
+      uri="webservice/syncProject"
+      method="PUT"
+      data=JSON . stringify ( arg )
+      mapper=ProjectMapper
+    }
+    resource getTopLevelEntities ( ) : void {
+      uri="webservice/getTopLevelEntities"
+      method="PUT"
+      data={}
+      mapper=TopLevelEntities_Mapper
+    }
+  }
+  function syncAllProject ( ) {
+    var begin = now ( ) ;
+    Sync . syncProject ( getTopEntitiesObjects ( ) );
+    log("time needed for syncing Project: "+( ( now ( ) - begin ) / 1000 ) . toString ( ));
+  }
+  function syncAllIssue ( ) {
+    var begin = now ( ) ;
+    Sync . syncIssue ( getTopEntitiesObjects ( ) );
+    log("time needed for syncing Issue: "+( ( now ( ) - begin ) / 1000 ) . toString ( ));
+  }
+  function syncAllPerson ( ) {
+    var begin = now ( ) ;
+    Sync . syncPerson ( getTopEntitiesObjects ( ) );
+    log("time needed for syncing Person: "+( ( now ( ) - begin ) / 1000 ) . toString ( ));
+  }
+  function syncAllPlace ( ) {
+    var begin = now ( ) ;
+    Sync . syncPlace ( getTopEntitiesObjects ( ) );
+    log("time needed for syncing Place: "+( ( now ( ) - begin ) / 1000 ) . toString ( ));
+  }
+  function syncAll ( ) {
+    setSyncFlag(true);
+    var begin = now ( ) ;
+    setStatusSync("sync Objects");
+    var time = Sync . getTimeStamp ( ) ;
+    syncAllProject();
+    setStatusSync("sync Project Objects");
+    syncAllIssue();
+    setStatusSync("sync Issue Objects");
+    syncAllPerson();
+    setStatusSync("sync Person Objects");
+    syncAllPlace();
+    setStatusSync("sync Place Objects");
+    foreach ( tl in Project . all ( ) . filter ( "sync" , "=" , true ) ) {
+      tl . lastSynced = time ;
+    }
+    foreach ( tl in Person . all ( ) . filter ( "sync" , "=" , true ) . filter ( "typeField" , "=" , "User" ) ) {
+      tl . lastSynced = time ;
+    }
+    setStatusSync("done");
+    log("totaltime:"+( ( now ( ) - begin ) / 1000 ) . toString ( ));
+    setSyncFlag(false);
+  }
+  function syncEdits ( ) : JSON {
+    setSyncFlag(true);
+    var array : [ JSON ] = [ ] ;
+    var value = Project . all ( ) . filter ( "dirty" , "=" , true ) . filter ( "new" , "=" , false ) . selectJSON ( [ "*" ] ) ;
+    var json = Dynamic ( name = "Project" , value = value ) ;
+    array . push ( json );
+    var value = Issue . all ( ) . filter ( "dirty" , "=" , true ) . filter ( "new" , "=" , false ) . selectJSON ( [ "*" ] ) ;
+    var json = Dynamic ( name = "Issue" , value = value ) ;
+    array . push ( json );
+    var value = Person . all ( ) . filter ( "dirty" , "=" , true ) . filter ( "new" , "=" , false ) . filter ( "version" , "!=" , 0 ) . selectJSON ( [ "*" ] ) ;
+    var json = Dynamic ( name = "Person" , value = value ) ;
+    array . push ( json );
+    var value = Place . all ( ) . filter ( "dirty" , "=" , true ) . filter ( "new" , "=" , false ) . selectJSON ( [ "*" ] ) ;
+    var json = Dynamic ( name = "Place" , value = value ) ;
+    array . push ( json );
+    var errors = Sync . sendEdits ( array ) ;
+    setSyncFlag(false);
+    return errors;
+  }
+  function syncNew ( ) : JSON {
+    setSyncFlag(true);
+    var array : [ JSON ] = [ ] ;
+    var value = Project . all ( ) . filter ( "new" , "=" , true ) . selectJSON ( [ "*" ] ) ;
+    var json = Dynamic ( name = "Project" , value = value ) ;
+    array . push ( json );
+    var value = Issue . all ( ) . filter ( "new" , "=" , true ) . selectJSON ( [ "*" ] ) ;
+    var json = Dynamic ( name = "Issue" , value = value ) ;
+    array . push ( json );
+    var value = Person . all ( ) . filter ( "new" , "=" , true ) . filter ( "sync" , "=" , true ) . selectJSON ( [ "*" ] ) ;
+    var json = Dynamic ( name = "Person" , value = value ) ;
+    array . push ( json );
+    var value = Place . all ( ) . filter ( "new" , "=" , true ) . selectJSON ( [ "*" ] ) ;
+    var json = Dynamic ( name = "Place" , value = value ) ;
+    array . push ( json );
+    var errors = Sync . sendNew ( array ) ;
+    setSyncFlag(false);
+    return errors;
+  }
+  function clearDirty ( excludes : [ String ] ) {
+    var value = Project . all ( ) . filter ( "dirty" , "=" , true ) ;
+    foreach ( ent in value ) {
+      if ( ! excludes . contains ( ent . id ) )
+      {
+        ent . dirty = false ;
+      }
+    }
+    var value = Issue . all ( ) . filter ( "dirty" , "=" , true ) ;
+    foreach ( ent in value ) {
+      if ( ! excludes . contains ( ent . id ) )
+      {
+        ent . dirty = false ;
+      }
+    }
+    var value = Person . all ( ) . filter ( "dirty" , "=" , true ) ;
+    foreach ( ent in value ) {
+      if ( ! excludes . contains ( ent . id ) )
+      {
+        ent . dirty = false ;
+      }
+    }
+    var value = Place . all ( ) . filter ( "dirty" , "=" , true ) ;
+    foreach ( ent in value ) {
+      if ( ! excludes . contains ( ent . id ) )
+      {
+        ent . dirty = false ;
+      }
+    }
+  }
+  function clearNew ( ) {
+    var value = Project . all ( ) . filter ( "new" , "=" , true ) ;
+    foreach ( ent in value ) {
+      remove(ent);
+    }
+    var value = Issue . all ( ) . filter ( "new" , "=" , true ) ;
+    foreach ( ent in value ) {
+      remove(ent);
+    }
+    var value = Person . all ( ) . filter ( "new" , "=" , true ) ;
+    foreach ( ent in value ) {
+      remove(ent);
+    }
+    var value = Place . all ( ) . filter ( "new" , "=" , true ) ;
+    foreach ( ent in value ) {
+      remove(ent);
+    }
+  }
+  function restoreObject ( type : String , ent : JSON ) {
+    if ( type == "Project" )
+    {
+      Project . fromSelectJSON ( ent );
+    }
+    if ( type == "Issue" )
+    {
+      Issue . fromSelectJSON ( ent );
+    }
+    if ( type == "Person" )
+    {
+      Person . fromSelectJSON ( ent );
+    }
+    if ( type == "Place" )
+    {
+      Place . fromSelectJSON ( ent );
+    }
+  }
+  function getTopEntitiesObjects ( ) : [ JSON ] {
+    var array : [ JSON ] = [ ] ;
+    var value = Project . all ( ) . filter ( "sync" , "=" , true ) . selectJSON ( [ "id" , "lastSynced" ] ) ;
+    var json = Dynamic ( name = "Project" , value = value ) ;
+    array . push ( json );
+    var value = Person . all ( ) . filter ( "sync" , "=" , true ) . filter ( "typeField" , "=" , "User" ) . selectJSON ( [ "id" , "lastSynced" ] ) ;
+    var json = Dynamic ( name = "User" , value = value ) ;
+    array . push ( json );
+    return array;
+  }
+  function getListofIds ( errorents : JSON ) : [ String ] {
+    var ids : [ String ] = [ ] ;
+    foreach ( errorent in errorents ) {
+      if ( errorent . id )
+      {
+        ids . push ( errorent . id );
+      }
+    }
+    return ids;
+  }
+  function newSync ( errorCTRL : Control3 < JSON , ? , Function1 < JSON , void > > = showErrors , detailCTRL : Control2 < String , String > = showObject ) : void {
+    setStatusSync("sync new Objects");
+    var errors = syncNew ( ) ;
+    if ( errors . length == 0 )
+    {
+      continueSyncAfterNew(errorCTRL,detailCTRL);
+    }
+    else
+    {
+      showErrorsEmptyScreen(errors,errorCTRL,detailCTRL,continueSyncAfterNew);
+    }
+  }
+  function editSync ( errorCTRL : Control3 < JSON , ? , Function1 < JSON , void > > = showErrors , detailCTRL : Control2 < String , String > = showObject ) : void {
+    setStatusSync("sync dirty Objects");
+    var errors = syncEdits ( ) ;
+    if ( errors . length == 0 )
+    {
+      continueSyncAfterEdit();
+    }
+    else
+    {
+      showErrorsEmptyScreen(errors,errorCTRL,detailCTRL,ingnoreAndContinueEdit);
+    }
+  }
+  function ingnoreAndContinueEdit ( jsonArray : JSON ) {
+    foreach ( error in jsonArray ) {
+      if ( error . restore )
+      {
+        restoreObject(error.ent,error.restore);
+      }
+    }
+    continueSyncAfterEdit();
+  }
+  function ingnoreAndContinueNew ( jsonArray : JSON ) {
+    clearNew();
+    continueSyncAfterEdit();
+  }
+  function continueSyncAfterNew ( errorCTRL : Control3 < JSON , ? , Function1 < JSON , void > > = showErrors , detailCTRL : Control2 < String , String > = showObject ) {
+    clearNew();
+    editSync(errorCTRL,detailCTRL);
+  }
+  function continueSyncAfterEdit ( ) {
+    clearDirty([]);
+    syncAll();
+  }
+  function getTopLevelEntitiesByService ( ) {
+    setSyncFlag(true);
+    Sync . getTopLevelEntities ( );
+    setSyncFlag(false);
+  }
+  var Status = "" ;
+  function getStatusSync ( ) : String {
+    return Status;
+  }
+  function setStatusSync ( status : String ) {
+    Status = status ;
+  }
