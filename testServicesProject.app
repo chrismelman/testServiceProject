@@ -23,3 +23,21 @@ application testServicesProject
 	entity Place {
 		name :: String
 	}
+	init {
+	 	var project1 := Project{id := "7c17fc80-719f-45af-9dfc-c65ba2a72a08".parseUUID(),  name := "test1"};
+	  	var project2 := Project{id := "949a3d74-51fe-45d8-92ea-def66dc49e08".parseUUID(), name := "test2"};
+	 	project1.save();
+	 	project2.save();
+	 	var issue1 := Issue{id := "31232e7d-ff46-401a-8e90-146b33c7bf38".parseUUID(), title := "issue1", project:= project1};
+	  	var issue2 := Issue{id := "bb62b326-0c8c-4f99-a0df-c791c43c3a50".parseUUID(), title := "issue2", project:= project1};
+	
+		var person1 := Person{id := "bcd97ac3-1394-488c-a366-fd08449e9df7".parseUUID(), name := "p1"};
+		var person2 := User{id := "4752b4cb-87d0-4732-a517-8d6c213aa80a".parseUUID(), name := "p2"};
+		var place1 := Place{id := "ac567323-1504-aa8c-b389-fd24672e9555".parseUUID(), name := "place1"};
+		
+		person1.save();
+		person2.save();
+		place1.save();
+		person2.place := place1;
+	}
+	
