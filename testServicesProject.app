@@ -1,6 +1,16 @@
 application testServicesProject
 imports webservices/services/interface
 	define page root(){ 
+		action test1() {
+			 runscript(
+			 	"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/getTopLevelEntities',  	data: '{}',  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+		}
+		
+		<span id="specialoutput">"" </span> 
+		submit test1()[id := "test1"] {"test1"}
+	
+		
+		output(Issue.all().length)
 		}
 	
 	entity Project {
@@ -47,3 +57,11 @@ imports webservices/services/interface
 		person2.place := place1;
 	}
 	
+	 test gettopentities{    
+	 	var d : WebDriver := getFirefoxDriver();        
+	 	d.get(navigate(root()));   
+	 	var testbutton := d.findElements(SelectBy.id("test1"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[{\"name\":\"Project\",\"value\":[{\"id\":\"7c17fc80-719f-45af-9dfc-c65ba2a72a08\",\"name\":\"test1\"},{\"id\":\"949a3d74-51fe-45d8-92ea-def66dc49e08\",\"name\":\"test2\"}]},{\"name\":\"User\",\"value\":[{\"id\":\"4752b4cb-87d0-4732-a517-8d6c213aa80a\",\"typeField\":\"User\",\"name\":\"p2\"}]}],\"errors\":[]}");       
+	 }
