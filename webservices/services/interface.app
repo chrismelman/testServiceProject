@@ -3,6 +3,7 @@ imports webservices/services/getTimeStamp
 imports webservices/services/getTopLevelEntities
 imports webservices/services/syncDirtyObjects
 imports webservices/services/syncIssue
+imports webservices/services/syncNewObjects
 imports webservices/services/syncPerson
 imports webservices/services/syncPlace
 imports webservices/services/syncProject
@@ -30,7 +31,7 @@ function getDispatchServletHelper ( ) : DispatchServletHelper
 }
 function getAvailableServices ( ) : Set<String>
 {
-  return {"syncDirtyObjects", "syncPlace", "syncPerson", "syncIssue", "syncProject", "getTimeStamp", "test", "getTopLevelEntities"};
+  return {"syncNewObjects", "syncDirtyObjects", "syncPlace", "syncPerson", "syncIssue", "syncProject", "getTimeStamp", "test", "getTopLevelEntities"};
 }
 service webservice ( service : String )
 {
