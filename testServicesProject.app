@@ -1,7 +1,7 @@
 application testServicesProject
 imports webservices/services/interface
 	define page root(){ 
-		action test1() {
+		action testgetTopLevelEntities() {
 			 runscript(
 			 	"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/getTopLevelEntities',  	data: '{}',  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
 		}
@@ -9,8 +9,15 @@ imports webservices/services/interface
 		<span id="specialoutput">"" </span> 
 		submit test1()[id := "test1"] {"test1"}
 	
+		action testgetTimeStamp() {
+			 runscript(
+			 	"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/getTimeStamp',  	data: '{}',  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data.result))},  dataType: 'JSON'});");
+		}
 		
 		output(Issue.all().length)
+		<span id="specialoutput">"" </span> 
+		submit testgetTopLevelEntities()[id := "test1"] {"test1"}
+		submit testgetTimeStamp()[id := "test2"] {"test2"}
 		}
 	
 	entity Project {
@@ -64,4 +71,12 @@ imports webservices/services/interface
 	 	testbutton.click();    
 	 	sleep(1000);
 	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[{\"name\":\"Project\",\"value\":[{\"id\":\"7c17fc80-719f-45af-9dfc-c65ba2a72a08\",\"name\":\"test1\"},{\"id\":\"949a3d74-51fe-45d8-92ea-def66dc49e08\",\"name\":\"test2\"}]},{\"name\":\"User\",\"value\":[{\"id\":\"4752b4cb-87d0-4732-a517-8d6c213aa80a\",\"typeField\":\"User\",\"name\":\"p2\"}]}],\"errors\":[]}");       
+	 }	 	
+	 	var testbutton := d.findElements(SelectBy.id("test2"))[0];    
+	 	testbutton.click();   
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText().parseLong() > 1360747929138L );       
+ 		assert(d.findElements(SelectBy.id("specialoutput"))[0].getText().parseLong() < now().getTime() );       
+
 	 }
+	 
+	 
