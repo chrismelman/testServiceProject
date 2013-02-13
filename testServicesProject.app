@@ -1,5 +1,11 @@
 application testServicesProject
 imports webservices/services/interface
+
+entity GlobalTime {
+	timestamp :: DateTime
+}
+
+var globaltime := GlobalTime{};
 	define page root(){ 
 		action testgetTopLevelEntities() {
 			 runscript(
@@ -63,6 +69,14 @@ imports webservices/services/interface
 
 		}
 		
+		action testSyncPlaceAfterEdit() {
+			 var time := now().getTime() + "";
+			 Place.all()[0].name := "place2";
+			 runscript(
+			 	"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncPlace',  	data: \\\"[{ name: 'Project',  value: [{ id: '7c17fc80-719f-45af-9dfc-c65ba2a72a08', lastSynced: " + time + "}]}, { name: 'Person',  value: [{ id: '4752b4cb-87d0-4732-a517-8d6c213aa80a',  lastSynced :" + time + " } ] } ]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+
+		}
+		
 		<span id="specialoutput">"" </span> 
 		submit testgetTopLevelEntities() [id := "test1"] { "test1" }
 		submit testgetTimeStamp() [id := "test2"] { "test2" }
@@ -76,6 +90,8 @@ imports webservices/services/interface
 		submit testSyncIssue2() [id := "test8"] { "test8" }
 		submit testSyncPerson2() [id := "test9"] { "test9" }
 		submit testSyncPlace2() [id := "test10"] { "test10" }
+		
+		submit testSyncPlaceAfterEdit() [id := "test11"] { "test11" }
 
 
 		}
@@ -127,7 +143,32 @@ imports webservices/services/interface
 	
 	
 	
-		test syncentitiesSecondClean{    
+	test syncentitiesafterEdit{    
+	 	var d : WebDriver := getFirefoxDriver();        
+	 	d.get(navigate(root()));   
+	 	var testbutton := d.findElements(SelectBy.id("test10"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[]}");             
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test11"))[0]; 
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[{\"id\":\"ac567323-1504-aa8c-b389-fd24672e9555\",\"name\":\"place2\",\"dirty\":\"false\",\"version\":2}],\"errors\":[]}");   
+	 
+	 	var testbutton := d.findElements(SelectBy.id("test10"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[]}");             
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test11"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[]}");             
+	 
+	 }
+	
+	test syncentitiesSecondClean{    
 	 	var d : WebDriver := getFirefoxDriver();        
 	 	d.get(navigate(root()));   
 	 	var testbutton := d.findElements(SelectBy.id("test7"))[0];    
