@@ -34,6 +34,35 @@ imports webservices/services/interface
 			 	"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncPlace',  	data: \\\"[{ name: 'Project',  value: [{ id: '7c17fc80-719f-45af-9dfc-c65ba2a72a08', lastSynced: 0}]}, { name: 'Person',  value: [{ id: '4752b4cb-87d0-4732-a517-8d6c213aa80a',  lastSynced :0 } ] } ]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
 
 		}
+		
+		action testSyncProject2() {
+			var time := now().getTime() + "";
+			runscript(
+			 	"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncProject',  	data: \\\"[{ name: 'Project',  value: [{ id: '7c17fc80-719f-45af-9dfc-c65ba2a72a08', lastSynced: " + time + "}]}, { name: 'Person',  value: [{ id: '4752b4cb-87d0-4732-a517-8d6c213aa80a',  lastSynced :" + time + " } ] } ]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+
+		}
+		
+		action testSyncIssue2() {
+			var time := now().getTime() + "";
+			runscript(
+			 	"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncIssue',  	data: \\\"[{ name: 'Project',  value: [{ id: '7c17fc80-719f-45af-9dfc-c65ba2a72a08', lastSynced: " + time + "}]}, { name: 'Person',  value: [{ id: '4752b4cb-87d0-4732-a517-8d6c213aa80a',  lastSynced :" + time + " } ] } ]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+
+		}
+		
+		action testSyncPerson2() {
+			var time := now().getTime() + "";
+			runscript(
+			 	"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncPerson',  	data: \\\"[{ name: 'Project',  value: [{ id: '7c17fc80-719f-45af-9dfc-c65ba2a72a08', lastSynced: " + time + "}]}, { name: 'Person',  value: [{ id: '4752b4cb-87d0-4732-a517-8d6c213aa80a',  lastSynced :" + time + " } ] } ]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+
+		}
+		
+		action testSyncPlace2() {
+			 var time := now().getTime() + "";
+			 runscript(
+			 	"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncPlace',  	data: \\\"[{ name: 'Project',  value: [{ id: '7c17fc80-719f-45af-9dfc-c65ba2a72a08', lastSynced: " + time + "}]}, { name: 'Person',  value: [{ id: '4752b4cb-87d0-4732-a517-8d6c213aa80a',  lastSynced :" + time + " } ] } ]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+
+		}
+		
 		<span id="specialoutput">"" </span> 
 		submit testgetTopLevelEntities() [id := "test1"] { "test1" }
 		submit testgetTimeStamp() [id := "test2"] { "test2" }
@@ -42,6 +71,13 @@ imports webservices/services/interface
 		submit testSyncIssue1() [id := "test4"] { "test4" }
 		submit testSyncPerson1() [id := "test5"] { "test5" }
 		submit testSyncPlace1() [id := "test6"] { "test6" }
+		
+		submit testSyncProject2() [id := "test7"] { "test7" }
+		submit testSyncIssue2() [id := "test8"] { "test8" }
+		submit testSyncPerson2() [id := "test9"] { "test9" }
+		submit testSyncPlace2() [id := "test10"] { "test10" }
+
+
 		}
 	
 	entity Project {
@@ -77,6 +113,7 @@ imports webservices/services/interface
 	 	project2.save();
 	 	var issue1 := Issue{id := "31232e7d-ff46-401a-8e90-146b33c7bf38".parseUUID(), title := "issue1", project:= project1};
 	  	var issue2 := Issue{id := "bb62b326-0c8c-4f99-a0df-c791c43c3a50".parseUUID(), title := "issue2", project:= project1};
+	  	var issue3 := Issue{id := "2e3dbf40-75c2-11e2-bcfd-0800200c9a66".parseUUID(), title := "issue3", project:= project2};
 	
 		var person1 := Person{id := "bcd97ac3-1394-488c-a366-fd08449e9df7".parseUUID(), name := "p1"};
 		var person2 := User{id := "4752b4cb-87d0-4732-a517-8d6c213aa80a".parseUUID(), name := "p2"};
@@ -88,6 +125,32 @@ imports webservices/services/interface
 		person2.place := place1;
 	}
 	
+	
+	
+		test syncentitiesSecondClean{    
+	 	var d : WebDriver := getFirefoxDriver();        
+	 	d.get(navigate(root()));   
+	 	var testbutton := d.findElements(SelectBy.id("test7"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[]}");             
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test8"))[0]; 
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[]}");   
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test9"))[0]; 
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[]}");      
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test10"))[0]; 
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[]}");      
+	 	  
+	 }
 	
 	test syncentitiesfirst{    
 	 	var d : WebDriver := getFirefoxDriver();        
