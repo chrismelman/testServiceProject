@@ -6,18 +6,42 @@ imports webservices/services/interface
 			 	"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/getTopLevelEntities',  	data: '{}',  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
 		}
 		
-		<span id="specialoutput">"" </span> 
-		submit test1()[id := "test1"] {"test1"}
-	
 		action testgetTimeStamp() {
 			 runscript(
 			 	"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/getTimeStamp',  	data: '{}',  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data.result))},  dataType: 'JSON'});");
 		}
 		
-		output(Issue.all().length)
+		action testSyncProject1() {
+			 runscript(
+			 	"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncProject',  	data: \\\"[{ name: 'Project',  value: [{ id: '7c17fc80-719f-45af-9dfc-c65ba2a72a08', lastSynced: 0}]}, { name: 'Person',  value: [{ id: '4752b4cb-87d0-4732-a517-8d6c213aa80a',  lastSynced :0 } ] } ]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+
+		}
+		
+		action testSyncIssue1() {
+			 runscript(
+			 	"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncIssue',  	data: \\\"[{ name: 'Project',  value: [{ id: '7c17fc80-719f-45af-9dfc-c65ba2a72a08', lastSynced: 0}]}, { name: 'Person',  value: [{ id: '4752b4cb-87d0-4732-a517-8d6c213aa80a',  lastSynced :0 } ] } ]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+
+		}
+		
+		action testSyncPerson1() {
+			 runscript(
+			 	"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncPerson',  	data: \\\"[{ name: 'Project',  value: [{ id: '7c17fc80-719f-45af-9dfc-c65ba2a72a08', lastSynced: 0}]}, { name: 'Person',  value: [{ id: '4752b4cb-87d0-4732-a517-8d6c213aa80a',  lastSynced :0 } ] } ]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+
+		}
+		
+		action testSyncPlace1() {
+			 runscript(
+			 	"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncPlace',  	data: \\\"[{ name: 'Project',  value: [{ id: '7c17fc80-719f-45af-9dfc-c65ba2a72a08', lastSynced: 0}]}, { name: 'Person',  value: [{ id: '4752b4cb-87d0-4732-a517-8d6c213aa80a',  lastSynced :0 } ] } ]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+
+		}
 		<span id="specialoutput">"" </span> 
-		submit testgetTopLevelEntities()[id := "test1"] {"test1"}
-		submit testgetTimeStamp()[id := "test2"] {"test2"}
+		submit testgetTopLevelEntities() [id := "test1"] { "test1" }
+		submit testgetTimeStamp() [id := "test2"] { "test2" }
+		
+		submit testSyncProject1() [id := "test3"] { "test3" }
+		submit testSyncIssue1() [id := "test4"] { "test4" }
+		submit testSyncPerson1() [id := "test5"] { "test5" }
+		submit testSyncPlace1() [id := "test6"] { "test6" }
 		}
 	
 	entity Project {
@@ -64,14 +88,40 @@ imports webservices/services/interface
 		person2.place := place1;
 	}
 	
+	
+	test syncentitiesfirst{    
+	 	var d : WebDriver := getFirefoxDriver();        
+	 	d.get(navigate(root()));   
+	 	var testbutton := d.findElements(SelectBy.id("test3"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[{\"id\":\"7c17fc80-719f-45af-9dfc-c65ba2a72a08\",\"name\":\"test1\",\"issues\":[{\"id\":\"31232e7d-ff46-401a-8e90-146b33c7bf38\"},{\"id\":\"bb62b326-0c8c-4f99-a0df-c791c43c3a50\"}],\"dirty\":\"false\",\"version\":2}],\"errors\":[]}");             
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test4"))[0]; 
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[{\"id\":\"31232e7d-ff46-401a-8e90-146b33c7bf38\",\"project\":{\"id\":\"7c17fc80-719f-45af-9dfc-c65ba2a72a08\"},\"title\":\"issue1\",\"dirty\":\"false\",\"version\":1},{\"id\":\"bb62b326-0c8c-4f99-a0df-c791c43c3a50\",\"project\":{\"id\":\"7c17fc80-719f-45af-9dfc-c65ba2a72a08\"},\"title\":\"issue2\",\"dirty\":\"false\",\"version\":1}],\"errors\":[]}");   
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test5"))[0]; 
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[{\"id\":\"4752b4cb-87d0-4732-a517-8d6c213aa80a\",\"typeField\":\"User\",\"Person_name\":\"p2\",\"dirty\":\"false\",\"version\":2,\"User_place\":{\"id\":\"ac567323-1504-aa8c-b389-fd24672e9555\"}}],\"errors\":[]}");      
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test6"))[0]; 
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[{\"id\":\"ac567323-1504-aa8c-b389-fd24672e9555\",\"name\":\"place1\",\"dirty\":\"false\",\"version\":1}],\"errors\":[]}");      
+	 	  
+	 }
+	
 	 test gettopentities{    
 	 	var d : WebDriver := getFirefoxDriver();        
 	 	d.get(navigate(root()));   
 	 	var testbutton := d.findElements(SelectBy.id("test1"))[0];    
 	 	testbutton.click();    
 	 	sleep(1000);
-	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[{\"name\":\"Project\",\"value\":[{\"id\":\"7c17fc80-719f-45af-9dfc-c65ba2a72a08\",\"name\":\"test1\"},{\"id\":\"949a3d74-51fe-45d8-92ea-def66dc49e08\",\"name\":\"test2\"}]},{\"name\":\"User\",\"value\":[{\"id\":\"4752b4cb-87d0-4732-a517-8d6c213aa80a\",\"typeField\":\"User\",\"name\":\"p2\"}]}],\"errors\":[]}");       
-	 }	 	
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[{\"name\":\"Project\",\"value\":[{\"id\":\"7c17fc80-719f-45af-9dfc-c65ba2a72a08\",\"name\":\"test1\"},{\"id\":\"949a3d74-51fe-45d8-92ea-def66dc49e08\",\"name\":\"test2\"}]},{\"name\":\"User\",\"value\":[{\"id\":\"4752b4cb-87d0-4732-a517-8d6c213aa80a\",\"typeField\":\"User\",\"Person_name\":\"p2\"}]}],\"errors\":[]}");       
+	 	
 	 	var testbutton := d.findElements(SelectBy.id("test2"))[0];    
 	 	testbutton.click();   
 	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText().parseLong() > 1360747929138L );       
