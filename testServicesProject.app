@@ -1,11 +1,11 @@
 application testServicesProject
 imports webservices/services/interface
 
-entity GlobalTime {
-	timestamp :: DateTime
-}
-
-var globaltime := GlobalTime{};
+// entity GlobalTime {
+// 	timestamp :: DateTime
+// }
+// 
+// var globaltime := GlobalTime{};
 	define page root(){ 
 		action testgetTopLevelEntities() {
 			 runscript(
@@ -72,12 +72,25 @@ var globaltime := GlobalTime{};
 		action testSyncPlaceAfterEdit() {
 			 var time := now().getTime() + "";
 			 Place.all()[0].name := "place2";
+			 sleep(1000);
 			 runscript(
 			 	"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncPlace',  	data: \\\"[{ name: 'Project',  value: [{ id: '7c17fc80-719f-45af-9dfc-c65ba2a72a08', lastSynced: " + time + "}]}, { name: 'Person',  value: [{ id: '4752b4cb-87d0-4732-a517-8d6c213aa80a',  lastSynced :" + time + " } ] } ]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
 
 		}
 		
+		action testSyncChange() {		
+		 	runscript(
+			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice_generated_syncDirtyObjects',  	data: \\\"[{ name : 'Place', value : [{ id : 'ac567323-1504-aa8c-b389-fd24672e9555', version : 2 , name : 'place3'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+
+		}
+		
+		action showPlaceAjaxTemplate() {
+			var place := loadPlace("ac567323-1504-aa8c-b389-fd24672e9555".parseUUID());		
+		 	replace(extrainfo,showPlace(place));
+		}
+		
 		<span id="specialoutput">"" </span> 
+		placeholder extrainfo{}
 		submit testgetTopLevelEntities() [id := "test1"] { "test1" }
 		submit testgetTimeStamp() [id := "test2"] { "test2" }
 		
@@ -92,6 +105,9 @@ var globaltime := GlobalTime{};
 		submit testSyncPlace2() [id := "test10"] { "test10" }
 		
 		submit testSyncPlaceAfterEdit() [id := "test11"] { "test11" }
+
+		submit showPlaceAjaxTemplate() [id := "test12"] { "test12" }
+		submit testSyncChange() [id := "test13"] { "test13" }
 
 
 		}
@@ -138,11 +154,39 @@ var globaltime := GlobalTime{};
 		person1.save();
 		person2.save();
 		place1.save();
+		
 		person2.place := place1;
+	}
+	
+	ajax template showPlace(p : Place) {
+		
+		par[id := "placeoutput1"]{ output(p.name) }
+		par[id := "placeoutput2"]{ output(p.version) }
 	}
 	
 	
 	
+	test firsteditsync {
+		var d : WebDriver := getFirefoxDriver();        
+	 	d.get(navigate(root()));   
+	 	var testbutton := d.findElements(SelectBy.id("test12"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("placeoutput1"))[0].getText() == "place2");   
+	 	assert(d.findElements(SelectBy.id("placeoutput2"))[0].getText() == "2");   
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test13"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+		assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[]}");             
+
+	 	var testbutton := d.findElements(SelectBy.id("test12"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("placeoutput1"))[0].getText() == "place3");   
+	 	assert(d.findElements(SelectBy.id("placeoutput2"))[0].getText() == "3"); 
+
+	}
 	test syncentitiesafterEdit{    
 	 	var d : WebDriver := getFirefoxDriver();        
 	 	d.get(navigate(root()));   
