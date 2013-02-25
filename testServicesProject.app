@@ -166,6 +166,28 @@ imports webservices/services/interface
 	
 	
 	
+	test editsyncoutofdate {
+		var d : WebDriver := getFirefoxDriver();        
+	 	d.get(navigate(root()));   
+	 	var testbutton := d.findElements(SelectBy.id("test12"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("placeoutput1"))[0].getText() == "place3");   
+	 	assert(d.findElements(SelectBy.id("placeoutput2"))[0].getText() == "3");   
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test13"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+		assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[{\"id\":\"ac567323-1504-aa8c-b389-fd24672e9555\",\"errors\":[{\"message\":\"Object already has newer version\",\"type\":\"warning\"}],\"ent\":\"Place\"}]}");             
+
+	 	var testbutton := d.findElements(SelectBy.id("test12"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("placeoutput1"))[0].getText() == "place3");   
+	 	assert(d.findElements(SelectBy.id("placeoutput2"))[0].getText() == "3"); 
+		CreateDrop.createDropDB(); 
+	}
+	
 	test firsteditsync {
 		var d : WebDriver := getFirefoxDriver();        
 	 	d.get(navigate(root()));   
