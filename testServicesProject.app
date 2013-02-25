@@ -130,6 +130,15 @@ imports webservices/services/interface
 		project -> Project(inverse=Project.issues)
 	}
 	
+	entity TestValidation{
+		testInt :: Int
+		testString :: String
+		testFloat :: Float
+		testBoolean :: Bool
+		testEmail :: Email 
+		
+	}
+	
 	entity User : Person {
 		place -> Place
 	}
@@ -144,6 +153,7 @@ imports webservices/services/interface
 	
 	derive webservices for Project , with nameproperty name
 	derive webservices for User , with nameproperty name
+	derive webservices for TestValidation , with nameproperty testString
 
 	 
 	init {
@@ -164,6 +174,10 @@ imports webservices/services/interface
 		place1.save();
 		
 		person2.place := place1;
+		
+		var test := TestValidation { id := "abbe67e0-7f80-11e2-9e96-0800200c9a66".parseUUID(), testBoolean := true, testEmail := "test@test.org", testInt := 1, testFloat := 9.9, testString := "test" };
+		
+		test.save();
 	}
 	
 	ajax template showPlace(p : Place) {
@@ -320,7 +334,7 @@ imports webservices/services/interface
 	 	var testbutton := d.findElements(SelectBy.id("test1"))[0];    
 	 	testbutton.click();    
 	 	sleep(1000);
-	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[{\"name\":\"Project\",\"value\":[{\"id\":\"7c17fc80-719f-45af-9dfc-c65ba2a72a08\",\"name\":\"test1\"},{\"id\":\"949a3d74-51fe-45d8-92ea-def66dc49e08\",\"name\":\"test2\"}]},{\"name\":\"User\",\"value\":[{\"id\":\"4752b4cb-87d0-4732-a517-8d6c213aa80a\",\"typeField\":\"User\",\"Person_name\":\"p2\"}]}],\"errors\":[]}");       
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[{\"name\":\"Project\",\"value\":[{\"id\":\"7c17fc80-719f-45af-9dfc-c65ba2a72a08\",\"name\":\"test1\"},{\"id\":\"949a3d74-51fe-45d8-92ea-def66dc49e08\",\"name\":\"test2\"}]},{\"name\":\"User\",\"value\":[{\"id\":\"4752b4cb-87d0-4732-a517-8d6c213aa80a\",\"typeField\":\"User\",\"Person_name\":\"p2\"}]},{\"name\":\"TestValidation\",\"value\":[{\"id\":\"abbe67e0-7f80-11e2-9e96-0800200c9a66\",\"testEmail\":\"test@test.org\",\"testString\":\"test\",\"testInt\":1,\"testBoolean\":true,\"testFloat\":9.9}]}],\"errors\":[]}");       
 	 	
 	 	var testbutton := d.findElements(SelectBy.id("test2"))[0];    
 	 	testbutton.click();   
