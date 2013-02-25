@@ -104,12 +104,12 @@ service webservice_generated_syncDirtyObjects ( )
             }
             else
             {
-              if ( kind == "Person" )
+              if ( kind == "TestValidation" )
               {
                 for ( count : Int from 0 to entities.length() )
                   {
                     var localErrors := JSONArray() ;
-                    var entity := ( loadEntity("Person", entities.getJSONObject(count).getString("id").parseUUID()) as Person ) ;
+                    var entity := ( loadEntity("TestValidation", entities.getJSONObject(count).getString("id").parseUUID()) as TestValidation ) ;
                     if ( entity == null )
                     {
                       localErrors.put(makeJSONErrorObject("Object does not exist", "warning"));
@@ -118,7 +118,7 @@ service webservice_generated_syncDirtyObjects ( )
                     {
                       if ( entity.version <= entities.getJSONObject(count).getInt("version") )
                       {
-                        mapperEditedPerson(entity, entities.getJSONObject(count), localErrors);
+                        mapperEditedTestValidation(entity, entities.getJSONObject(count), localErrors);
                         var exceptions := entity.validateSave() ;
                         addValidateExceptionsToErrors(exceptions, localErrors);
                         if ( containsErrorInJSONArray(localErrors) )
@@ -138,7 +138,7 @@ service webservice_generated_syncDirtyObjects ( )
                     }
                     if ( localErrors.length() > 0 )
                     {
-                      var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Person", entities.getJSONObject(count).getString("id")) ;
+                      var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "TestValidation", entities.getJSONObject(count).getString("id")) ;
                       if ( containsErrorInJSONArray(localErrors) && entity != null )
                       {
                         jsonErrorObject.put("restore", entity.toJSON());
@@ -149,12 +149,12 @@ service webservice_generated_syncDirtyObjects ( )
               }
               else
               {
-                if ( kind == "Place" )
+                if ( kind == "Person" )
                 {
                   for ( count : Int from 0 to entities.length() )
                     {
                       var localErrors := JSONArray() ;
-                      var entity := ( loadEntity("Place", entities.getJSONObject(count).getString("id").parseUUID()) as Place ) ;
+                      var entity := ( loadEntity("Person", entities.getJSONObject(count).getString("id").parseUUID()) as Person ) ;
                       if ( entity == null )
                       {
                         localErrors.put(makeJSONErrorObject("Object does not exist", "warning"));
@@ -163,7 +163,7 @@ service webservice_generated_syncDirtyObjects ( )
                       {
                         if ( entity.version <= entities.getJSONObject(count).getInt("version") )
                         {
-                          mapperEditedPlace(entity, entities.getJSONObject(count), localErrors);
+                          mapperEditedPerson(entity, entities.getJSONObject(count), localErrors);
                           var exceptions := entity.validateSave() ;
                           addValidateExceptionsToErrors(exceptions, localErrors);
                           if ( containsErrorInJSONArray(localErrors) )
@@ -183,7 +183,7 @@ service webservice_generated_syncDirtyObjects ( )
                       }
                       if ( localErrors.length() > 0 )
                       {
-                        var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Place", entities.getJSONObject(count).getString("id")) ;
+                        var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Person", entities.getJSONObject(count).getString("id")) ;
                         if ( containsErrorInJSONArray(localErrors) && entity != null )
                         {
                           jsonErrorObject.put("restore", entity.toJSON());
@@ -194,7 +194,53 @@ service webservice_generated_syncDirtyObjects ( )
                 }
                 else
                 {
-                  errors.put("type is undefined: " + kind);
+                  if ( kind == "Place" )
+                  {
+                    for ( count : Int from 0 to entities.length() )
+                      {
+                        var localErrors := JSONArray() ;
+                        var entity := ( loadEntity("Place", entities.getJSONObject(count).getString("id").parseUUID()) as Place ) ;
+                        if ( entity == null )
+                        {
+                          localErrors.put(makeJSONErrorObject("Object does not exist", "warning"));
+                        }
+                        else
+                        {
+                          if ( entity.version <= entities.getJSONObject(count).getInt("version") )
+                          {
+                            mapperEditedPlace(entity, entities.getJSONObject(count), localErrors);
+                            var exceptions := entity.validateSave() ;
+                            addValidateExceptionsToErrors(exceptions, localErrors);
+                            if ( containsErrorInJSONArray(localErrors) )
+                            {
+                              rollbackAndStartNewTransaction();
+                            }
+                            else
+                            {
+                              var uncheckedExceptions := commitAndStartNewTransaction() ;
+                              addValidationExceptionsToLocalErrors(uncheckedExceptions, localErrors);
+                            }
+                          }
+                          else
+                          {
+                            localErrors.put(makeJSONErrorObject("Object already has newer version", "warning"));
+                          }
+                        }
+                        if ( localErrors.length() > 0 )
+                        {
+                          var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Place", entities.getJSONObject(count).getString("id")) ;
+                          if ( containsErrorInJSONArray(localErrors) && entity != null )
+                          {
+                            jsonErrorObject.put("restore", entity.toJSON());
+                          }
+                          errors.put(jsonErrorObject);
+                        }
+                      }
+                  }
+                  else
+                  {
+                    errors.put("type is undefined: " + kind);
+                  }
                 }
               }
             }

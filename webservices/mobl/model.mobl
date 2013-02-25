@@ -1,0 +1,36 @@
+module webservices::mobl::model
+  entity Project {
+    version : Num
+    issues : Collection < Issue > ( inverse : project )
+    name : String
+    lastSynced : Num
+    sync : Bool
+  }
+  entity Issue {
+    version : Num
+    project : Project ( inverse : issues )
+    title : String
+  }
+  entity TestValidation {
+    version : Num
+    testEmail : String
+    testBoolean : Bool
+    testFloat : Num
+    testString : String
+    testInt : Num
+    lastSynced : Num
+    sync : Bool
+  }
+  entity Person {
+    version : Num
+    name : String
+    typeField : String
+    lastSynced : Num
+    sync : Bool
+    Person_name : String
+    User_place : Place
+  }
+  entity Place {
+    version : Num
+    name : String
+  }

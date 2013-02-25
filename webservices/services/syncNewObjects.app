@@ -50,34 +50,12 @@ service webservice_generated_syncNewObjects ( )
             }
             else
             {
-              if ( kind == "Person" )
+              if ( kind == "TestValidation" )
               {
                 for ( count : Int from 0 to entities.length() )
                   {
                     var localErrors := JSONArray() ;
-                    var entity := ( null as Person ) ;
-                    if ( json.has("typeField") && json.getString("typeField") != null )
-                    {
-                      var subtype := json.getString("typeField") ;
-                      if ( subtype == "Person" )
-                      {
-                        var entity := Person{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
-                      }
-                      else
-                      {
-                        if ( subtype == "User" )
-                        {
-                          var entity := User{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
-                        }
-                        else
-                        {
-                        }
-                      }
-                    }
-                    else
-                    {
-                      errors.put("object has no typefield");
-                    }
+                    var entity := TestValidation{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
                     if ( entity != null )
                     {
                       entity.save();
@@ -90,12 +68,34 @@ service webservice_generated_syncNewObjects ( )
               }
               else
               {
-                if ( kind == "Place" )
+                if ( kind == "Person" )
                 {
                   for ( count : Int from 0 to entities.length() )
                     {
                       var localErrors := JSONArray() ;
-                      var entity := Place{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
+                      var entity := ( null as Person ) ;
+                      if ( json.has("typeField") && json.getString("typeField") != null )
+                      {
+                        var subtype := json.getString("typeField") ;
+                        if ( subtype == "Person" )
+                        {
+                          var entity := Person{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
+                        }
+                        else
+                        {
+                          if ( subtype == "User" )
+                          {
+                            var entity := User{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
+                          }
+                          else
+                          {
+                          }
+                        }
+                      }
+                      else
+                      {
+                        errors.put("object has no typefield");
+                      }
                       if ( entity != null )
                       {
                         entity.save();
@@ -108,7 +108,26 @@ service webservice_generated_syncNewObjects ( )
                 }
                 else
                 {
-                  errors.put("type is undefined: " + kind);
+                  if ( kind == "Place" )
+                  {
+                    for ( count : Int from 0 to entities.length() )
+                      {
+                        var localErrors := JSONArray() ;
+                        var entity := Place{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
+                        if ( entity != null )
+                        {
+                          entity.save();
+                        }
+                        else
+                        {
+                          errors.put("object has no id");
+                        }
+                      }
+                  }
+                  else
+                  {
+                    errors.put("type is undefined: " + kind);
+                  }
                 }
               }
             }
@@ -163,57 +182,83 @@ service webservice_generated_syncNewObjects ( )
             }
             else
             {
-              if ( kind == "Person" )
+              if ( kind == "TestValidation" )
               {
                 for ( count : Int from 0 to entities.length() )
                   {
                     var localErrors := JSONArray() ;
-                    var entity := ( loadEntity("Person", entities.getJSONObject(count).getString("id").parseUUID()) as Person ) ;
+                    var entity := ( loadEntity("TestValidation", entities.getJSONObject(count).getString("id").parseUUID()) as TestValidation ) ;
                     if ( entity == null )
                     {
                       localErrors.put(makeJSONErrorObject("Object does not exist", "warning"));
                     }
                     else
                     {
-                      mapperNewPerson(entity, entities.getJSONObject(count), localErrors);
+                      mapperNewTestValidation(entity, entities.getJSONObject(count), localErrors);
                       var exceptions := entity.validateSave() ;
                       addValidateExceptionsToErrors(exceptions, localErrors);
                     }
                     if ( localErrors.length() > 0 )
                     {
-                      var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Person", entities.getJSONObject(count).getString("id")) ;
+                      var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "TestValidation", entities.getJSONObject(count).getString("id")) ;
                       errors.put(jsonErrorObject);
                     }
                   }
               }
               else
               {
-                if ( kind == "Place" )
+                if ( kind == "Person" )
                 {
                   for ( count : Int from 0 to entities.length() )
                     {
                       var localErrors := JSONArray() ;
-                      var entity := ( loadEntity("Place", entities.getJSONObject(count).getString("id").parseUUID()) as Place ) ;
+                      var entity := ( loadEntity("Person", entities.getJSONObject(count).getString("id").parseUUID()) as Person ) ;
                       if ( entity == null )
                       {
                         localErrors.put(makeJSONErrorObject("Object does not exist", "warning"));
                       }
                       else
                       {
-                        mapperNewPlace(entity, entities.getJSONObject(count), localErrors);
+                        mapperNewPerson(entity, entities.getJSONObject(count), localErrors);
                         var exceptions := entity.validateSave() ;
                         addValidateExceptionsToErrors(exceptions, localErrors);
                       }
                       if ( localErrors.length() > 0 )
                       {
-                        var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Place", entities.getJSONObject(count).getString("id")) ;
+                        var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Person", entities.getJSONObject(count).getString("id")) ;
                         errors.put(jsonErrorObject);
                       }
                     }
                 }
                 else
                 {
-                  errors.put("type is undefined: " + kind);
+                  if ( kind == "Place" )
+                  {
+                    for ( count : Int from 0 to entities.length() )
+                      {
+                        var localErrors := JSONArray() ;
+                        var entity := ( loadEntity("Place", entities.getJSONObject(count).getString("id").parseUUID()) as Place ) ;
+                        if ( entity == null )
+                        {
+                          localErrors.put(makeJSONErrorObject("Object does not exist", "warning"));
+                        }
+                        else
+                        {
+                          mapperNewPlace(entity, entities.getJSONObject(count), localErrors);
+                          var exceptions := entity.validateSave() ;
+                          addValidateExceptionsToErrors(exceptions, localErrors);
+                        }
+                        if ( localErrors.length() > 0 )
+                        {
+                          var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Place", entities.getJSONObject(count).getString("id")) ;
+                          errors.put(jsonErrorObject);
+                        }
+                      }
+                  }
+                  else
+                  {
+                    errors.put("type is undefined: " + kind);
+                  }
                 }
               }
             }

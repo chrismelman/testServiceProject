@@ -3,6 +3,7 @@ imports webservices/related-entities/Issue
 imports webservices/related-entities/Person
 imports webservices/related-entities/Place
 imports webservices/related-entities/Project
+imports webservices/related-entities/TestValidation
 imports webservices/related-entities/User
 function getSetWhereNotSeen ( set : Set<Entity> , seen : Set<UUID> , add : Set<Entity> ) : Set<Entity>
 {
@@ -24,7 +25,7 @@ function isTopLevelEntity ( ent : Entity ) : Bool
 }
 function isTopLevelEntity ( str : String ) : Bool
 {
-  var toplevelEntities := {"Project", "User"} ;
+  var toplevelEntities := {"Project", "User", "TestValidation"} ;
   return str in toplevelEntities;
 }
 function getRelatedEntities ( ent : Entity ) : Set<Entity>
@@ -37,6 +38,10 @@ function getRelatedEntities ( ent : Entity ) : Set<Entity>
   if ( type == "Issue" )
   {
     return ( ent as Issue ).getRelatedEntities();
+  }
+  if ( type == "TestValidation" )
+  {
+    return ( ent as TestValidation ).getRelatedEntities();
   }
   if ( type == "User" )
   {
@@ -100,6 +105,34 @@ function getAllIssueForTopEntity ( tl : Entity ) : Set<Issue>
             if ( ent.getTypeString() == "Issue" )
             {
               found.add(( ent as Issue ));
+            }
+            newTodo.addAll(getSetWhereNotSeen(todo, seen, getRelatedEntities(ent)));
+          }
+        }
+      todo := newTodo;
+    }
+  return found;
+}
+function getAllTestValidationForTopEntity ( tl : Entity ) : Set<TestValidation>
+{
+  if ( tl.getTypeString() == "TestValidation" )
+  {
+    return {( tl as TestValidation )};
+  }
+  var todo := Set<Entity>() ;
+  var seen := Set<UUID>() ;
+  var found := Set<TestValidation>() ;
+  todo.addAll(getSetWhereNotSeen(todo, seen, getRelatedEntities(tl)));
+  while ( todo.length > 0 )
+    {
+      var newTodo := Set<Entity>() ;
+      for ( ent : Entity in todo where ent != null )
+        {
+          if ( ! isTopLevelEntity(ent) )
+          {
+            if ( ent.getTypeString() == "TestValidation" )
+            {
+              found.add(( ent as TestValidation ));
             }
             newTodo.addAll(getSetWhereNotSeen(todo, seen, getRelatedEntities(ent)));
           }

@@ -7,6 +7,7 @@ imports webservices/services/syncNewObjects
 imports webservices/services/syncPerson
 imports webservices/services/syncPlace
 imports webservices/services/syncProject
+imports webservices/services/syncTestValidation
 imports webservices/services/test
 imports webservices/related-entities/main
 imports webservices/mappers/main
@@ -31,7 +32,7 @@ function getDispatchServletHelper ( ) : DispatchServletHelper
 }
 function getAvailableServices ( ) : Set<String>
 {
-  return {"syncNewObjects", "syncDirtyObjects", "syncPlace", "syncPerson", "syncIssue", "syncProject", "getTimeStamp", "test", "getTopLevelEntities"};
+  return {"syncNewObjects", "syncDirtyObjects", "syncPlace", "syncPerson", "syncTestValidation", "syncIssue", "syncProject", "getTimeStamp", "test", "getTopLevelEntities"};
 }
 service webservice ( service : String )
 {

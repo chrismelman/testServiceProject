@@ -33,6 +33,12 @@ module webservices::mobl::sync
       data=JSON . stringify ( arg )
       mapper=PersonMapper
     }
+    resource syncTestValidation ( arg : [ JSON ] ) : void {
+      uri="webservice/syncTestValidation"
+      method="PUT"
+      data=JSON . stringify ( arg )
+      mapper=TestValidationMapper
+    }
     resource syncIssue ( arg : [ JSON ] ) : void {
       uri="webservice/syncIssue"
       method="PUT"
@@ -62,6 +68,11 @@ module webservices::mobl::sync
     Sync . syncIssue ( getTopEntitiesObjects ( ) );
     log("time needed for syncing Issue: "+( ( now ( ) - begin ) / 1000 ) . toString ( ));
   }
+  function syncAllTestValidation ( ) {
+    var begin = now ( ) ;
+    Sync . syncTestValidation ( getTopEntitiesObjects ( ) );
+    log("time needed for syncing TestValidation: "+( ( now ( ) - begin ) / 1000 ) . toString ( ));
+  }
   function syncAllPerson ( ) {
     var begin = now ( ) ;
     Sync . syncPerson ( getTopEntitiesObjects ( ) );
@@ -81,6 +92,8 @@ module webservices::mobl::sync
     setStatusSync("sync Project Objects");
     syncAllIssue();
     setStatusSync("sync Issue Objects");
+    syncAllTestValidation();
+    setStatusSync("sync TestValidation Objects");
     syncAllPerson();
     setStatusSync("sync Person Objects");
     syncAllPlace();
@@ -89,6 +102,9 @@ module webservices::mobl::sync
       tl . lastSynced = time ;
     }
     foreach ( tl in Person . all ( ) . filter ( "sync" , "=" , true ) . filter ( "typeField" , "=" , "User" ) ) {
+      tl . lastSynced = time ;
+    }
+    foreach ( tl in TestValidation . all ( ) . filter ( "sync" , "=" , true ) ) {
       tl . lastSynced = time ;
     }
     setStatusSync("done");
@@ -103,6 +119,9 @@ module webservices::mobl::sync
     array . push ( json );
     var value = Issue . all ( ) . filter ( "dirty" , "=" , true ) . filter ( "new" , "=" , false ) . selectJSON ( [ "*" ] ) ;
     var json = Dynamic ( name = "Issue" , value = value ) ;
+    array . push ( json );
+    var value = TestValidation . all ( ) . filter ( "dirty" , "=" , true ) . filter ( "new" , "=" , false ) . selectJSON ( [ "*" ] ) ;
+    var json = Dynamic ( name = "TestValidation" , value = value ) ;
     array . push ( json );
     var value = Person . all ( ) . filter ( "dirty" , "=" , true ) . filter ( "new" , "=" , false ) . filter ( "version" , "!=" , 0 ) . selectJSON ( [ "*" ] ) ;
     var json = Dynamic ( name = "Person" , value = value ) ;
@@ -123,6 +142,9 @@ module webservices::mobl::sync
     var value = Issue . all ( ) . filter ( "new" , "=" , true ) . selectJSON ( [ "*" ] ) ;
     var json = Dynamic ( name = "Issue" , value = value ) ;
     array . push ( json );
+    var value = TestValidation . all ( ) . filter ( "new" , "=" , true ) . selectJSON ( [ "*" ] ) ;
+    var json = Dynamic ( name = "TestValidation" , value = value ) ;
+    array . push ( json );
     var value = Person . all ( ) . filter ( "new" , "=" , true ) . filter ( "sync" , "=" , true ) . selectJSON ( [ "*" ] ) ;
     var json = Dynamic ( name = "Person" , value = value ) ;
     array . push ( json );
@@ -142,6 +164,13 @@ module webservices::mobl::sync
       }
     }
     var value = Issue . all ( ) . filter ( "dirty" , "=" , true ) ;
+    foreach ( ent in value ) {
+      if ( ! excludes . contains ( ent . id ) )
+      {
+        ent . dirty = false ;
+      }
+    }
+    var value = TestValidation . all ( ) . filter ( "dirty" , "=" , true ) ;
     foreach ( ent in value ) {
       if ( ! excludes . contains ( ent . id ) )
       {
@@ -172,6 +201,10 @@ module webservices::mobl::sync
     foreach ( ent in value ) {
       remove(ent);
     }
+    var value = TestValidation . all ( ) . filter ( "new" , "=" , true ) ;
+    foreach ( ent in value ) {
+      remove(ent);
+    }
     var value = Person . all ( ) . filter ( "new" , "=" , true ) ;
     foreach ( ent in value ) {
       remove(ent);
@@ -190,6 +223,10 @@ module webservices::mobl::sync
     {
       Issue . fromSelectJSON ( ent );
     }
+    if ( type == "TestValidation" )
+    {
+      TestValidation . fromSelectJSON ( ent );
+    }
     if ( type == "Person" )
     {
       Person . fromSelectJSON ( ent );
@@ -206,6 +243,9 @@ module webservices::mobl::sync
     array . push ( json );
     var value = Person . all ( ) . filter ( "sync" , "=" , true ) . filter ( "typeField" , "=" , "User" ) . selectJSON ( [ "id" , "lastSynced" ] ) ;
     var json = Dynamic ( name = "User" , value = value ) ;
+    array . push ( json );
+    var value = TestValidation . all ( ) . filter ( "sync" , "=" , true ) . selectJSON ( [ "id" , "lastSynced" ] ) ;
+    var json = Dynamic ( name = "TestValidation" , value = value ) ;
     array . push ( json );
     return array;
   }

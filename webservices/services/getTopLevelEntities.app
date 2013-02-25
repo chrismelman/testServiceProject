@@ -22,6 +22,15 @@ service webservice_generated_getTopLevelEntities ( )
   jsonobj.put("name", "User");
   jsonobj.put("value", array);
   result.put(jsonobj);
+  var array := JSONArray() ;
+  var jsonobj := JSONObject() ;
+  for ( topent : TestValidation in TestValidation.all() )
+    {
+      array.put(topent.toSimpleJSON());
+    }
+  jsonobj.put("name", "TestValidation");
+  jsonobj.put("value", array);
+  result.put(jsonobj);
   json.put("errors", errors);
   json.put("result", result);
   return json;

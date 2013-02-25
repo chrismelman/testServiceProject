@@ -14,6 +14,9 @@ module webservices::mobl::unsync
   function nrUnsyncedProject ( ) : Num {
     return getUnsyncedProject ( ) . count ( );
   }
+  function nrUnsyncedTestValidation ( ) : Num {
+    return getUnsyncedTestValidation ( ) . count ( );
+  }
   function getUnsyncedIssue ( ) : Collection < Issue > {
     return Issue . all ( ) . filter ( "version" , "=" , 0 );
   }
@@ -25,6 +28,9 @@ module webservices::mobl::unsync
   }
   function getUnsyncedProject ( ) : Collection < Project > {
     return Project . all ( ) . filter ( "version" , "=" , 0 ) . filter ( "sync" , "=" , true );
+  }
+  function getUnsyncedTestValidation ( ) : Collection < TestValidation > {
+    return TestValidation . all ( ) . filter ( "version" , "=" , 0 ) . filter ( "sync" , "=" , true );
   }
   function syncUnsyncedIssue ( ) {
     var begin = now ( ) ;
@@ -46,6 +52,11 @@ module webservices::mobl::unsync
     Sync . syncProject ( getUnsyncedProject ( ) . selectJSON ( [ "id" , "version" ] ) );
     log("time needed for syncing unsynced Project: "+( ( now ( ) - begin ) / 1000 ) . toString ( ));
   }
+  function syncUnsyncedTestValidation ( ) {
+    var begin = now ( ) ;
+    Sync . syncTestValidation ( getUnsyncedTestValidation ( ) . selectJSON ( [ "id" , "version" ] ) );
+    log("time needed for syncing unsynced TestValidation: "+( ( now ( ) - begin ) / 1000 ) . toString ( ));
+  }
   control statusUnsyncedEntities ( ) {
     group {
       < h3 >
@@ -62,6 +73,9 @@ module webservices::mobl::unsync
       </ p >
       < p >
         label ( "Project: " + nrUnsyncedProject ( ) )
+      </ p >
+      < p >
+        label ( "TestValidation: " + nrUnsyncedTestValidation ( ) )
       </ p >
     }
   }
