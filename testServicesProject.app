@@ -90,9 +90,21 @@ imports webservices/services/interface
 
 		}
 		
+		action testSyncChangeMissingField() {		
+		 	runscript(
+			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice_generated_syncDirtyObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : 'abbe67e0-7f80-11e2-9e96-0800200c9a66', version : 1 , testBoolean : false, testInt : 2, testFloat : 1.1, testString : 'test2'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+
+
+		}
+		
 		action showPlaceAjaxTemplate() {
 			var place := loadPlace("ac567323-1504-aa8c-b389-fd24672e9555".parseUUID());		
 		 	replace(extrainfo,showPlace(place));
+		}
+		
+		action showTestValidationAjaxTemplate() {
+			var test := loadTestValidation("abbe67e0-7f80-11e2-9e96-0800200c9a66".parseUUID());		
+		 	replace(extrainfo,showTestValidation(test));
 		}
 		
 		<span id="specialoutput">"" </span> 
@@ -116,6 +128,10 @@ imports webservices/services/interface
 		submit testSyncChange() [id := "test13"] { "test13" }
 		
 		submit testSyncChangeForce() [id := "test14"] { "test14" }
+		
+		submit showTestValidationAjaxTemplate() [id := "test15"] { "test15" }
+		submit testSyncChangeMissingField() [id := "test16"] { "test16" }
+
 
 
 		}
@@ -186,7 +202,47 @@ imports webservices/services/interface
 		par[id := "placeoutput2"]{ output(p.version) }
 	}
 	
+	ajax template showTestValidation(t : TestValidation) {
+		
+		par[id := "testvalidationoutput1"]{ output(t.testInt) }
+		par[id := "testvalidationoutput2"]{ output(t.testBoolean.toString()) }
+		par[id := "testvalidationoutput3"]{ output(t.testEmail) }
+		par[id := "testvalidationoutput4"]{ output(t.testFloat) }
+		par[id := "testvalidationoutput5"]{ output(t.testString) }
+		par[id := "testvalidationoutput6"]{ output(t.version) }
+
 	
+	}
+	
+	test editsyncmissingfield {
+		var d : WebDriver := getFirefoxDriver();        
+	 	d.get(navigate(root()));   
+	 	var testbutton := d.findElements(SelectBy.id("test15"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput1"))[0].getText() == "1");   
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput2"))[0].getText() == "true");   
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput3"))[0].getText() == "test@test.org"); 
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput4"))[0].getText() == "9.9");  
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput5"))[0].getText() == "test");  
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput6"))[0].getText() == "1");   
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test16"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+		assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[{\"id\":\"abbe67e0-7f80-11e2-9e96-0800200c9a66\",\"errors\":[{\"message\":\"Entity is missing property testEmail\",\"type\":\"warning\"}],\"ent\":\"TestValidation\"}]}");             
+	
+		var testbutton := d.findElements(SelectBy.id("test15"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+		assert(d.findElements(SelectBy.id("testvalidationoutput1"))[0].getText() == "2");   
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput2"))[0].getText() == "false");   
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput3"))[0].getText() == "test@test.org"); 
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput4"))[0].getText() == "1.1");  
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput5"))[0].getText() == "test2");  
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput6"))[0].getText() == "2");   
+		CreateDrop.createDropDB(); 
+	}	
 	
 	test editsyncoutofdateforceupdate {
 		var d : WebDriver := getFirefoxDriver();        
