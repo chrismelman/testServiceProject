@@ -84,6 +84,12 @@ imports webservices/services/interface
 
 		}
 		
+		action testSyncChangeForce() {		
+		 	runscript(
+			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice_generated_syncDirtyObjects',  	data: \\\"[{ name : 'Place', value : [{ id : 'ac567323-1504-aa8c-b389-fd24672e9555', version : 9999 , name : 'place4'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+
+		}
+		
 		action showPlaceAjaxTemplate() {
 			var place := loadPlace("ac567323-1504-aa8c-b389-fd24672e9555".parseUUID());		
 		 	replace(extrainfo,showPlace(place));
@@ -108,6 +114,8 @@ imports webservices/services/interface
 
 		submit showPlaceAjaxTemplate() [id := "test12"] { "test12" }
 		submit testSyncChange() [id := "test13"] { "test13" }
+		
+		submit testSyncChangeForce() [id := "test14"] { "test14" }
 
 
 		}
@@ -166,6 +174,28 @@ imports webservices/services/interface
 	
 	
 	
+	test editsyncoutofdateforceupdate {
+		var d : WebDriver := getFirefoxDriver();        
+	 	d.get(navigate(root()));   
+	 	var testbutton := d.findElements(SelectBy.id("test12"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("placeoutput1"))[0].getText() == "place3");   
+	 	assert(d.findElements(SelectBy.id("placeoutput2"))[0].getText() == "3");   
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test14"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+		assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[]}");             
+
+	 	var testbutton := d.findElements(SelectBy.id("test12"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("placeoutput1"))[0].getText() == "place4");   
+	 	assert(d.findElements(SelectBy.id("placeoutput2"))[0].getText() == "4"); 
+		CreateDrop.createDropDB(); 
+	}	
+		
 	test editsyncoutofdate {
 		var d : WebDriver := getFirefoxDriver();        
 	 	d.get(navigate(root()));   
