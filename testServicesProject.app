@@ -102,7 +102,10 @@ imports webservices/services/interface
 		 	runscript(
 			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice_generated_syncDirtyObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : 'abbe67e0-7f80-11e2-9e96-0800200c9a66', version : 2 , testBoolean : true, testInt : 500, testFloat : 1.5, testString : 'test5', testEmail : 'test@test.org'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
 		}
-		
+		action testSyncPartlyRollback() {		
+		 	runscript(
+			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice_generated_syncDirtyObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : 'abbe67e0-7f80-11e2-9e96-0800200c9a66', version : 2 , testBoolean : true, testInt : 805, testFloat : 1.8, testString : 'test8', testEmail : 'test8@test.org'}]},{ name : 'Place', value : [{ id : 'ac567323-1504-aa8c-b389-fd24672e9555', version : 9999 , name : 'place66'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+		}		
 		action showPlaceAjaxTemplate() {
 			var place := loadPlace("ac567323-1504-aa8c-b389-fd24672e9555".parseUUID());		
 		 	replace(extrainfo,showPlace(place));
@@ -139,7 +142,10 @@ imports webservices/services/interface
 		submit testSyncChangeMissingField() [id := "test16"] { "test16" }
 		
 		submit testSyncChangeWrongInvalidString() [id := "test17"] { "test17" }
+		
 		submit testSyncChangeInvalidValidation() [id := "test18"] { "test18" }
+		
+		submit testSyncPartlyRollback()[id := "test19"] { "test19" }
 
 		}
 	
@@ -221,7 +227,50 @@ imports webservices/services/interface
 	
 	}
 	
-		test editsyncTriggerValidation {
+	
+	test editPartlyRollback {
+		var d : WebDriver := getFirefoxDriver();        
+	 	d.get(navigate(root()));   
+	 	var testbutton := d.findElements(SelectBy.id("test15"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+		assert(d.findElements(SelectBy.id("testvalidationoutput1"))[0].getText() == "2");   
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput2"))[0].getText() == "false");   
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput3"))[0].getText() == "test@test.org"); 
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput4"))[0].getText() == "1.1");  
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput5"))[0].getText() == "test2");  
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput6"))[0].getText() == "2");  
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test12"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("placeoutput1"))[0].getText() == "place4");   
+	 	assert(d.findElements(SelectBy.id("placeoutput2"))[0].getText() == "4");    
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test19"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+		assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[{\"id\":\"abbe67e0-7f80-11e2-9e96-0800200c9a66\",\"errors\":[{\"message\":\"not higher then 200 allowed\",\"type\":\"error\"}],\"restore\":{\"id\":\"abbe67e0-7f80-11e2-9e96-0800200c9a66\",\"testEmail\":\"test@test.org\",\"testString\":\"test2\",\"testInt\":2,\"testBoolean\":false,\"testFloat\":1.1,\"version\":2},\"ent\":\"TestValidation\"}]}");  
+
+	 	var testbutton := d.findElements(SelectBy.id("test12"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("placeoutput1"))[0].getText() == "place66");   
+	 	assert(d.findElements(SelectBy.id("placeoutput2"))[0].getText() == "5");   
+	 	
+		var testbutton := d.findElements(SelectBy.id("test15"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+		assert(d.findElements(SelectBy.id("testvalidationoutput1"))[0].getText() == "2");   
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput2"))[0].getText() == "false");   
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput3"))[0].getText() == "test@test.org"); 
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput4"))[0].getText() == "1.1");  
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput5"))[0].getText() == "test2");  
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput6"))[0].getText() == "2");   
+		// CreateDrop.createDropDB(); 
+	}	
+	
+	test editsyncTriggerValidation {
 		var d : WebDriver := getFirefoxDriver();        
 	 	d.get(navigate(root()));   
 	 	var testbutton := d.findElements(SelectBy.id("test15"))[0];    
