@@ -108,6 +108,10 @@ imports webservices/services/interface
 		 	runscript(
 			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncDirtyObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : 'abbe67e0-7f80-11e2-9e96-0800200c9a66', version : 2 , testBoolean : true, testInt : 805, testFloat : 1.8, testString : 'test8', testEmail : 'test8@test.org'}]},{ name : 'Place', value : [{ id : 'ac567323-1504-aa8c-b389-fd24672e9555', version : 9999 , name : 'place66'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
 		}	
+		action testNewObject() {		
+		 	runscript(
+			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncNewObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : '66404a7e-86d8-4b95-a17c-7e2c67d676ce', version : 1 , testBoolean : true, testInt : 12, testFloat : 9.5, testString : 'test12', testEmail : 'test12@test.org'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+		}			
 		action showPlaceAjaxTemplate() {
 			var place := loadPlace("ac567323-1504-aa8c-b389-fd24672e9555".parseUUID());		
 		 	replace(extrainfo,showPlace(place));
@@ -115,6 +119,10 @@ imports webservices/services/interface
 		
 		action showTestValidationAjaxTemplate() {
 			var test := loadTestValidation("abbe67e0-7f80-11e2-9e96-0800200c9a66".parseUUID());		
+		 	replace(extrainfo,showTestValidation(test));
+		}
+		action showTestValidationAjaxTemplateExtra1() {
+			var test := loadTestValidation("66404a7e-86d8-4b95-a17c-7e2c67d676ce".parseUUID());		
 		 	replace(extrainfo,showTestValidation(test));
 		}
 		
@@ -148,6 +156,9 @@ imports webservices/services/interface
 		submit testSyncChangeInvalidValidation() [id := "test18"] { "test18" }
 		
 		submit testSyncPartlyRollback()[id := "test19"] { "test19" }
+
+		submit testNewObject()[id := "test20"] { "test20" }
+		submit showTestValidationAjaxTemplateExtra1()[id := "test21"] { "test21" }
 
 		}
 	
@@ -229,6 +240,28 @@ imports webservices/services/interface
 	
 	}
 	
+	
+	test testnewobject {
+		var d : WebDriver := getFirefoxDriver();        
+	 	d.get(navigate(root()));   
+	 	
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test20"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+		assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[]}"); 
+
+		var testbutton := d.findElements(SelectBy.id("test21"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+		assert(d.findElements(SelectBy.id("testvalidationoutput1"))[0].getText() == "12");   
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput2"))[0].getText() == "true");   
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput3"))[0].getText() == "test12@test.org"); 
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput4"))[0].getText() == "9.5");  
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput5"))[0].getText() == "test12");  
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput6"))[0].getText() == "2");   
+		// CreateDrop.createDropDB(); 
+	}	
 	
 	test editPartlyRollback {
 		var d : WebDriver := getFirefoxDriver();        
