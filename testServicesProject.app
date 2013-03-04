@@ -78,34 +78,36 @@ imports webservices/services/interface
 
 		}
 		
+		
+		
 		action testSyncChange() {		
 		 	runscript(
-			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice_generated_syncDirtyObjects',  	data: \\\"[{ name : 'Place', value : [{ id : 'ac567323-1504-aa8c-b389-fd24672e9555', version : 2 , name : 'place3'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncDirtyObjects',  	data: \\\"[{ name : 'Place', value : [{ id : 'ac567323-1504-aa8c-b389-fd24672e9555', version : 2 , name : 'place3'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
 
 		}
 		
 		action testSyncChangeForce() {		
 		 	runscript(
-			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice_generated_syncDirtyObjects',  	data: \\\"[{ name : 'Place', value : [{ id : 'ac567323-1504-aa8c-b389-fd24672e9555', version : 9999 , name : 'place4'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncDirtyObjects',  	data: \\\"[{ name : 'Place', value : [{ id : 'ac567323-1504-aa8c-b389-fd24672e9555', version : 9999 , name : 'place4'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
 
 		}
 		
 		action testSyncChangeMissingField() {		
 		 	runscript(
-			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice_generated_syncDirtyObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : 'abbe67e0-7f80-11e2-9e96-0800200c9a66', version : 1 , testBoolean : false, testInt : 2, testFloat : 1.1, testString : 'test2'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncDirtyObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : 'abbe67e0-7f80-11e2-9e96-0800200c9a66', version : 1 , testBoolean : false, testInt : 2, testFloat : 1.1, testString : 'test2'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
 		}
 		action testSyncChangeWrongInvalidString() {		
 		 	runscript(
-			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice_generated_syncDirtyObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : 'abbe67e0-7f80-11e2-9e96-0800200c9a66', version : 2 , testBoolean : true, testInt : 5, testFloat : 1.5, testString : 'test5', testEmail : 'tesstest.org'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncDirtyObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : 'abbe67e0-7f80-11e2-9e96-0800200c9a66', version : 2 , testBoolean : true, testInt : 5, testFloat : 1.5, testString : 'test5', testEmail : 'tesstest.org'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
 		}
 		action testSyncChangeInvalidValidation() {		
 		 	runscript(
-			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice_generated_syncDirtyObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : 'abbe67e0-7f80-11e2-9e96-0800200c9a66', version : 2 , testBoolean : true, testInt : 500, testFloat : 1.5, testString : 'test5', testEmail : 'test@test.org'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncDirtyObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : 'abbe67e0-7f80-11e2-9e96-0800200c9a66', version : 2 , testBoolean : true, testInt : 500, testFloat : 1.5, testString : 'test5', testEmail : 'test@test.org'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
 		}
 		action testSyncPartlyRollback() {		
 		 	runscript(
-			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice_generated_syncDirtyObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : 'abbe67e0-7f80-11e2-9e96-0800200c9a66', version : 2 , testBoolean : true, testInt : 805, testFloat : 1.8, testString : 'test8', testEmail : 'test8@test.org'}]},{ name : 'Place', value : [{ id : 'ac567323-1504-aa8c-b389-fd24672e9555', version : 9999 , name : 'place66'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
-		}		
+			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncDirtyObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : 'abbe67e0-7f80-11e2-9e96-0800200c9a66', version : 2 , testBoolean : true, testInt : 805, testFloat : 1.8, testString : 'test8', testEmail : 'test8@test.org'}]},{ name : 'Place', value : [{ id : 'ac567323-1504-aa8c-b389-fd24672e9555', version : 9999 , name : 'place66'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+		}	
 		action showPlaceAjaxTemplate() {
 			var place := loadPlace("ac567323-1504-aa8c-b389-fd24672e9555".parseUUID());		
 		 	replace(extrainfo,showPlace(place));
