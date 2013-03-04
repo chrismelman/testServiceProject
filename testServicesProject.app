@@ -93,10 +93,11 @@ imports webservices/services/interface
 		action testSyncChangeMissingField() {		
 		 	runscript(
 			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice_generated_syncDirtyObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : 'abbe67e0-7f80-11e2-9e96-0800200c9a66', version : 1 , testBoolean : false, testInt : 2, testFloat : 1.1, testString : 'test2'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
-
-
 		}
-		
+		action testSyncChangeWrongInvalidString() {		
+		 	runscript(
+			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice_generated_syncDirtyObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : 'abbe67e0-7f80-11e2-9e96-0800200c9a66', version : 2 , testBoolean : true, testInt : 5, testFloat : 1.5, testString : 'test5', testEmail : 'tesstest.org'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+		}
 		action showPlaceAjaxTemplate() {
 			var place := loadPlace("ac567323-1504-aa8c-b389-fd24672e9555".parseUUID());		
 		 	replace(extrainfo,showPlace(place));
@@ -131,8 +132,8 @@ imports webservices/services/interface
 		
 		submit showTestValidationAjaxTemplate() [id := "test15"] { "test15" }
 		submit testSyncChangeMissingField() [id := "test16"] { "test16" }
-
-
+		
+		submit testSyncChangeWrongInvalidString() [id := "test17"] { "test17" }
 
 		}
 	
@@ -213,6 +214,36 @@ imports webservices/services/interface
 
 	
 	}
+	
+	test editsyncWrongEmailString {
+		var d : WebDriver := getFirefoxDriver();        
+	 	d.get(navigate(root()));   
+	 	var testbutton := d.findElements(SelectBy.id("test15"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+		assert(d.findElements(SelectBy.id("testvalidationoutput1"))[0].getText() == "2");   
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput2"))[0].getText() == "false");   
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput3"))[0].getText() == "test@test.org"); 
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput4"))[0].getText() == "1.1");  
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput5"))[0].getText() == "test2");  
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput6"))[0].getText() == "2");     
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test17"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+		assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[{\"id\":\"abbe67e0-7f80-11e2-9e96-0800200c9a66\",\"errors\":[{\"message\":\"testEmail: Not a valid email address\",\"type\":\"error\"}],\"restore\":{\"id\":\"abbe67e0-7f80-11e2-9e96-0800200c9a66\",\"testEmail\":\"test@test.org\",\"testString\":\"test2\",\"testInt\":2,\"testBoolean\":false,\"testFloat\":1.1,\"version\":2},\"ent\":\"TestValidation\"}]}");  
+
+		var testbutton := d.findElements(SelectBy.id("test15"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+		assert(d.findElements(SelectBy.id("testvalidationoutput1"))[0].getText() == "2");   
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput2"))[0].getText() == "false");   
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput3"))[0].getText() == "test@test.org"); 
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput4"))[0].getText() == "1.1");  
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput5"))[0].getText() == "test2");  
+	 	assert(d.findElements(SelectBy.id("testvalidationoutput6"))[0].getText() == "2");   
+		// CreateDrop.createDropDB(); 
+	}	
 	
 	test editsyncmissingfield {
 		var d : WebDriver := getFirefoxDriver();        
