@@ -51,6 +51,7 @@ service webservice_generated_syncDirtyObjects ( )
                   var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Project", entities.getJSONObject(count).getString("id")) ;
                   if ( containsErrorInJSONArray(localErrors) && entity != null )
                   {
+                    var entity := ( loadEntity("Project", entities.getJSONObject(count).getString("id").parseUUID()) as Project ) ;
                     jsonErrorObject.put("restore", entity.toJSON());
                   }
                   errors.put(jsonErrorObject);
@@ -96,6 +97,7 @@ service webservice_generated_syncDirtyObjects ( )
                     var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Issue", entities.getJSONObject(count).getString("id")) ;
                     if ( containsErrorInJSONArray(localErrors) && entity != null )
                     {
+                      var entity := ( loadEntity("Issue", entities.getJSONObject(count).getString("id").parseUUID()) as Issue ) ;
                       jsonErrorObject.put("restore", entity.toJSON());
                     }
                     errors.put(jsonErrorObject);
@@ -141,6 +143,7 @@ service webservice_generated_syncDirtyObjects ( )
                       var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "TestValidation", entities.getJSONObject(count).getString("id")) ;
                       if ( containsErrorInJSONArray(localErrors) && entity != null )
                       {
+                        var entity := ( loadEntity("TestValidation", entities.getJSONObject(count).getString("id").parseUUID()) as TestValidation ) ;
                         jsonErrorObject.put("restore", entity.toJSON());
                       }
                       errors.put(jsonErrorObject);
@@ -186,6 +189,7 @@ service webservice_generated_syncDirtyObjects ( )
                         var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Person", entities.getJSONObject(count).getString("id")) ;
                         if ( containsErrorInJSONArray(localErrors) && entity != null )
                         {
+                          var entity := ( loadEntity("Person", entities.getJSONObject(count).getString("id").parseUUID()) as Person ) ;
                           jsonErrorObject.put("restore", entity.toJSON());
                         }
                         errors.put(jsonErrorObject);
@@ -231,6 +235,7 @@ service webservice_generated_syncDirtyObjects ( )
                           var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Place", entities.getJSONObject(count).getString("id")) ;
                           if ( containsErrorInJSONArray(localErrors) && entity != null )
                           {
+                            var entity := ( loadEntity("Place", entities.getJSONObject(count).getString("id").parseUUID()) as Place ) ;
                             jsonErrorObject.put("restore", entity.toJSON());
                           }
                           errors.put(jsonErrorObject);
