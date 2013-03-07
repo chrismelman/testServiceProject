@@ -74,18 +74,19 @@ service webservice_generated_syncNewObjects ( )
                     {
                       var localErrors := JSONArray() ;
                       var entity := ( null as Person ) ;
-                      if ( json.has("typeField") && json.getString("typeField") != null )
+                      var jsontemp := entities.getJSONObject(count) ;
+                      if ( jsontemp.has("typeField") && jsontemp.getString("typeField") != null )
                       {
-                        var subtype := json.getString("typeField") ;
+                        var subtype := jsontemp.getString("typeField") ;
                         if ( subtype == "Person" )
                         {
-                          var entity := Person{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
+                          entity := Person{id := entities.getJSONObject(count).getString("id").parseUUID()};
                         }
                         else
                         {
                           if ( subtype == "User" )
                           {
-                            var entity := User{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
+                            entity := User{id := entities.getJSONObject(count).getString("id").parseUUID()};
                           }
                           else
                           {
@@ -132,6 +133,19 @@ service webservice_generated_syncNewObjects ( )
               }
             }
           }
+        }
+        else
+        {
+          errors.put("not valid parameter format missing/incorrect value/name/object");
+        }
+      }
+    for ( count : Int from 0 to request.length() )
+      {
+        var jsontemp := request.getJSONObject(count) ;
+        var kind := jsontemp.getString("name") ;
+        var entities := jsontemp.getJSONArray("value") ;
+        if ( jsontemp != null && kind != null && entities != null )
+        {
           if ( kind == "Project" )
           {
             for ( count : Int from 0 to entities.length() )
