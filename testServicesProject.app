@@ -240,6 +240,41 @@ imports webservices/services/interface
 	
 	}
 	
+	ajax template showUser(u : User) {
+		
+		par[id := "useroutput1"]{ output(u.name) }
+		par[id := "useroutput2"]{ output(u.place.name) }
+		par[id := "useroutput3"]{ output(u.version) }
+
+	
+	}
+	
+	
+	test testnewobjectlinked{
+		var d : WebDriver := getFirefoxDriver();        
+	 	d.get(navigate(root()));   
+	 	
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test22"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+		assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[]}"); 
+
+		var testbutton := d.findElements(SelectBy.id("test23"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("placeoutput1"))[0].getText() == "place99");   
+	 	assert(d.findElements(SelectBy.id("placeoutput2"))[0].getText() == "2");   
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test24"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("useroutput1"))[0].getText() == "p5");   
+	 	assert(d.findElements(SelectBy.id("useroutput2"))[0].getText() == "place99");   
+	 	assert(d.findElements(SelectBy.id("useroutput3"))[0].getText() == "2");   
+
+		// CreateDrop.createDropDB(); 
+	}	
 	
 	test testnewobject {
 		var d : WebDriver := getFirefoxDriver();        
