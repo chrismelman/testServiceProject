@@ -111,11 +111,24 @@ imports webservices/services/interface
 		action testNewObject() {		
 		 	runscript(
 			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncNewObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : '66404a7e-86d8-4b95-a17c-7e2c67d676ce', version : 1 , testBoolean : true, testInt : 12, testFloat : 9.5, testString : 'test12', testEmail : 'test12@test.org'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
-		}			
+		}	
+		action testNewObjectLinked() {		
+		 	runscript(
+			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncNewObjects',  	data: \\\"[{ name : 'Person', value : [{ id : '9c5bdf50-850a-11e2-9e96-0800200c9a66', typeField : 'User', Person_name : 'p5', version : 2, User_place : {  id : '15b0f6d1-5101-4126-9444-6037d890307c' }}]}, { name : 'Place', value : [{id : '15b0f6d1-5101-4126-9444-6037d890307c', version : 2, name : 'place99'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+		}
+		action testNewObjectWrong() {		
+		 	runscript(
+			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncNewObjects',  	data: \\\"[{ name : 'TestValidation', value : [{ id : '2d703ef0-8ce0-11e2-9e96-0800200c9a66', version : 1 , testBoolean : true, testInt : 405, testFloat : 9.5, testString : 'test12', testEmail : 'test12@test.org'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+		}					
 		action showPlaceAjaxTemplate() {
 			var place := loadPlace("ac567323-1504-aa8c-b389-fd24672e9555".parseUUID());		
 		 	replace(extrainfo,showPlace(place));
 		}
+
+		action showPlaceAjaxTemplate1() {
+			var place := loadPlace("15b0f6d1-5101-4126-9444-6037d890307c".parseUUID());		
+		 	replace(extrainfo,showPlace(place));
+		}		
 		
 		action showTestValidationAjaxTemplate() {
 			var test := loadTestValidation("abbe67e0-7f80-11e2-9e96-0800200c9a66".parseUUID());		
@@ -124,6 +137,15 @@ imports webservices/services/interface
 		action showTestValidationAjaxTemplateExtra1() {
 			var test := loadTestValidation("66404a7e-86d8-4b95-a17c-7e2c67d676ce".parseUUID());		
 		 	replace(extrainfo,showTestValidation(test));
+		}
+		
+		action showUserAjaxTemplate() {
+			var user := loadUser("9c5bdf50-850a-11e2-9e96-0800200c9a66".parseUUID());		
+		 	replace(extrainfo,showUser(user));
+		}	
+		
+		action shownrTestValidation() {
+			replace(extrainfo, shownumberofTestValidation());
 		}
 		
 		<span id="specialoutput">"" </span> 
@@ -159,6 +181,13 @@ imports webservices/services/interface
 
 		submit testNewObject()[id := "test20"] { "test20" }
 		submit showTestValidationAjaxTemplateExtra1()[id := "test21"] { "test21" }
+
+		submit testNewObjectLinked()[id := "test22"] { "test22" }
+		submit showPlaceAjaxTemplate1()[id := "test23"] { "test23" }
+		submit showUserAjaxTemplate()[id := "test24"] { "test24" }
+		
+		submit testNewObjectWrong()[id := "test25"] { "test25" }
+		submit shownrTestValidation()[id := "test26"] { "test26" }
 
 		}
 	
@@ -248,6 +277,36 @@ imports webservices/services/interface
 
 	
 	}
+	
+	ajax template shownumberofTestValidation() {
+		
+		par[id := "TVoutput1"]{ output(TestValidation.all().length) }
+	
+	}
+	
+	
+	test testnewobjectwrong{
+		var d : WebDriver := getFirefoxDriver();        
+	 	d.get(navigate(root()));   
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test26"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("TVoutput1"))[0].getText() == "2");   
+
+	 	
+	 	var testbutton := d.findElements(SelectBy.id("test25"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+		assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[{\"id\":\"2d703ef0-8ce0-11e2-9e96-0800200c9a66\",\"errors\":[{\"message\":\"not higher then 200 allowed\",\"type\":\"error\"}],\"ent\":\"TestValidation\"}]}"); 
+
+		var testbutton := d.findElements(SelectBy.id("test26"))[0];    
+	 	testbutton.click();    
+	 	sleep(1000);
+	 	assert(d.findElements(SelectBy.id("TVoutput1"))[0].getText() == "2");  
+
+		// CreateDrop.createDropDB(); 
+	}	
 	
 	
 	test testnewobjectlinked{
