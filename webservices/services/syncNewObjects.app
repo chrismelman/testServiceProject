@@ -5,6 +5,7 @@ service webservice_generated_syncNewObjects ( )
   var errors := JSONArray() ;
   var request := JSONArray(readRequestBody()) ;
   var result := JSONArray() ;
+  var rollback := false ;
   if ( request != null )
   {
     for ( count : Int from 0 to request.length() )
@@ -164,6 +165,7 @@ service webservice_generated_syncNewObjects ( )
                 }
                 if ( localErrors.length() > 0 )
                 {
+                  rollback := true;
                   var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Project", entities.getJSONObject(count).getString("id")) ;
                   errors.put(jsonErrorObject);
                 }
@@ -189,6 +191,7 @@ service webservice_generated_syncNewObjects ( )
                   }
                   if ( localErrors.length() > 0 )
                   {
+                    rollback := true;
                     var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Issue", entities.getJSONObject(count).getString("id")) ;
                     errors.put(jsonErrorObject);
                   }
@@ -214,6 +217,7 @@ service webservice_generated_syncNewObjects ( )
                     }
                     if ( localErrors.length() > 0 )
                     {
+                      rollback := true;
                       var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "TestValidation", entities.getJSONObject(count).getString("id")) ;
                       errors.put(jsonErrorObject);
                     }
@@ -239,6 +243,7 @@ service webservice_generated_syncNewObjects ( )
                       }
                       if ( localErrors.length() > 0 )
                       {
+                        rollback := true;
                         var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Person", entities.getJSONObject(count).getString("id")) ;
                         errors.put(jsonErrorObject);
                       }
@@ -264,6 +269,7 @@ service webservice_generated_syncNewObjects ( )
                         }
                         if ( localErrors.length() > 0 )
                         {
+                          rollback := true;
                           var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Place", entities.getJSONObject(count).getString("id")) ;
                           errors.put(jsonErrorObject);
                         }
@@ -287,6 +293,10 @@ service webservice_generated_syncNewObjects ( )
   else
   {
     errors.put("not valid parameter format");
+  }
+  if ( rollback )
+  {
+    rollbackAndStartNewTransaction();
   }
   json.put("errors", errors);
   json.put("result", result);
