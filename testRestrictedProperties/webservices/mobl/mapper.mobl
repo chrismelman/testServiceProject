@@ -1,0 +1,73 @@
+module webservices::mobl::mapper
+  function AMapper ( json : JSON ) {
+    if ( json . errors && json . errors . length > 0 )
+    {
+      log(json.errors);
+    }
+    else
+    {
+      foreach ( ent : JSON in json . result ) {
+        A . fromSelectJSON ( ent );
+      }
+    }
+  }
+  function BMapper ( json : JSON ) {
+    if ( json . errors && json . errors . length > 0 )
+    {
+      log(json.errors);
+    }
+    else
+    {
+      foreach ( ent : JSON in json . result ) {
+        B . fromSelectJSON ( ent );
+      }
+    }
+  }
+  function CMapper ( json : JSON ) {
+    if ( json . errors && json . errors . length > 0 )
+    {
+      log(json.errors);
+    }
+    else
+    {
+      foreach ( ent : JSON in json . result ) {
+        C . fromSelectJSON ( ent );
+      }
+    }
+  }
+  function timeStampMapper ( json : JSON ) : Num {
+    if ( json . errors && json . errors . length > 0 )
+    {
+      log(json.errors);
+    }
+    else
+    {
+      return json . result;
+    }
+  }
+  function voidMapper ( json : JSON ) : void {
+    if ( json . errors && json . errors . length > 0 )
+    {
+      log(json.errors);
+    }
+  }
+  function errorMapper ( json : JSON ) : JSON {
+    if ( json . errors )
+    {
+      return json . errors;
+    }
+  }
+  import webservices :: mobl :: model
+  function TopLevelEntities_Mapper ( json : JSON ) {
+    foreach ( topent : JSON in json . result ) {
+      if ( topent . name == "A" )
+      {
+        foreach ( ent : JSON in topent . value ) {
+          if ( ! A . load ( ent . id ) )
+          {
+            A . fromSelectJSON ( ent );
+          }
+        }
+      }
+    }
+  }
