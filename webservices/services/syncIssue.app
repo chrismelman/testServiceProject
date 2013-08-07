@@ -19,7 +19,7 @@ service webservice_generated_syncIssue ( )
               var timestamp := JSONEntList.getJSONObject(innercount).getLong("lastSynced") ;
               if ( tl != null && timestamp != null )
               {
-                for ( ent : Issue in getAllIssueForTopEntity(tl) where timestamp == 0 || ent.modified != null && ent.modified.getTime() > timestamp )
+                for ( ent : Issue in getAllIssueForTopEntity(tl) where timestamp == 0 || ent.modified != null && ent.modified.getTime() > timestamp && ent.mayReadSynchronize() )
                   {
                     result.put(addDirtyFalse(ent.toJSON()));
                   }
@@ -40,6 +40,7 @@ service webservice_generated_syncIssue ( )
   {
     errors.put("not valid parameter format");
   }
+  log("number of entities for syncIssue: " + result.length());
   json.put("errors", errors);
   json.put("result", result);
   return json;

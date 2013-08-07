@@ -19,7 +19,7 @@ service webservice_generated_syncPlace ( )
               var timestamp := JSONEntList.getJSONObject(innercount).getLong("lastSynced") ;
               if ( tl != null && timestamp != null )
               {
-                for ( ent : Place in getAllPlaceForTopEntity(tl) where timestamp == 0 || ent.modified != null && ent.modified.getTime() > timestamp )
+                for ( ent : Place in getAllPlaceForTopEntity(tl) where timestamp == 0 || ent.modified != null && ent.modified.getTime() > timestamp && ent.mayReadSynchronize() )
                   {
                     result.put(addDirtyFalse(ent.toJSON()));
                   }
@@ -40,6 +40,7 @@ service webservice_generated_syncPlace ( )
   {
     errors.put("not valid parameter format");
   }
+  log("number of entities for syncPlace: " + result.length());
   json.put("errors", errors);
   json.put("result", result);
   return json;

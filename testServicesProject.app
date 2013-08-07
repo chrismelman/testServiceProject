@@ -1,6 +1,9 @@
 application testServicesProject
 imports webservices/services/interface
 
+native class mine.test.CreateDropTest as CreateDrop{
+	static createDropDB()	
+}
 // entity GlobalTime {
 // 	timestamp :: DateTime
 // }
@@ -194,11 +197,24 @@ imports webservices/services/interface
 	entity Project {
 		name :: String
 		issues -> Set<Issue>
+		
+		synchronization configuration {
+			toplevel name property :name
+		}
 	}
 	
 	entity Issue {
 		title :: String
 		project -> Project(inverse=Project.issues)
+	}
+	
+	
+	entity User : Person {
+		place -> Place
+		
+		synchronization configuration {
+			toplevel name property :name
+		}
 	}
 	
 	entity TestValidation{
@@ -208,10 +224,10 @@ imports webservices/services/interface
 		testBoolean :: Bool
 		testEmail :: Email 
 		
-	}
-	
-	entity User : Person {
-		place -> Place
+		synchronization configuration {
+			toplevel name property : testString
+		}
+		
 	}
 	
 	entity Person {
@@ -222,9 +238,9 @@ imports webservices/services/interface
 		name :: String
 	}
 	
-	derive webservices for Project , with nameproperty name
-	derive webservices for User , with nameproperty name
-	derive webservices for TestValidation , with nameproperty testString
+	// derive webservices for Project , with nameproperty name
+	// derive webservices for User , with nameproperty name
+	// derive webservices for TestValidation , with nameproperty testString
 
 	 
 	init {
@@ -486,7 +502,7 @@ imports webservices/services/interface
 	 	assert(d.findElements(SelectBy.id("testvalidationoutput4"))[0].getText() == "1.1");  
 	 	assert(d.findElements(SelectBy.id("testvalidationoutput5"))[0].getText() == "test2");  
 	 	assert(d.findElements(SelectBy.id("testvalidationoutput6"))[0].getText() == "2");   
-		CreateDrop.createDropDB(); 
+		// CreateDrop.createDropDB(); 
 	}	
 	
 	test editsyncoutofdateforceupdate {
@@ -508,7 +524,7 @@ imports webservices/services/interface
 	 	sleep(1000);
 	 	assert(d.findElements(SelectBy.id("placeoutput1"))[0].getText() == "place4");   
 	 	assert(d.findElements(SelectBy.id("placeoutput2"))[0].getText() == "4"); 
-		CreateDrop.createDropDB(); 
+		// CreateDrop.createDropDB(); 
 	}	
 		
 	test editsyncoutofdate {
@@ -530,7 +546,7 @@ imports webservices/services/interface
 	 	sleep(1000);
 	 	assert(d.findElements(SelectBy.id("placeoutput1"))[0].getText() == "place3");   
 	 	assert(d.findElements(SelectBy.id("placeoutput2"))[0].getText() == "3"); 
-		CreateDrop.createDropDB(); 
+		// CreateDrop.createDropDB(); 
 	}
 	
 	test firsteditsync {
@@ -552,7 +568,7 @@ imports webservices/services/interface
 	 	sleep(1000);
 	 	assert(d.findElements(SelectBy.id("placeoutput1"))[0].getText() == "place3");   
 	 	assert(d.findElements(SelectBy.id("placeoutput2"))[0].getText() == "3"); 
-
+		// CreateDrop.createDropDB(); 
 	}
 	test syncentitiesafterEdit{    
 	 	var d : WebDriver := getFirefoxDriver();        
@@ -575,7 +591,8 @@ imports webservices/services/interface
 	 	var testbutton := d.findElements(SelectBy.id("test11"))[0];    
 	 	testbutton.click();    
 	 	sleep(1000);
-	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[]}");             
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[]}");   
+	 	// CreateDrop.createDropDB();          
 	 
 	 }
 	
@@ -601,7 +618,7 @@ imports webservices/services/interface
 	 	testbutton.click();    
 	 	sleep(1000);
 	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[],\"errors\":[]}");      
-	 	  
+	 	// CreateDrop.createDropDB();   
 	 }
 	
 	test syncentitiesfirst{    
@@ -626,7 +643,7 @@ imports webservices/services/interface
 	 	testbutton.click();    
 	 	sleep(1000);
 	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[{\"id\":\"ac567323-1504-aa8c-b389-fd24672e9555\",\"name\":\"place1\",\"dirty\":\"false\",\"version\":1}],\"errors\":[]}");      
-	 	  
+	 	// CreateDrop.createDropDB(); 
 	 }
 	
 	 test gettopentities{    
@@ -641,7 +658,7 @@ imports webservices/services/interface
 	 	testbutton.click();   
 	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText().parseLong() > 1360747929138L );       
  		assert(d.findElements(SelectBy.id("specialoutput"))[0].getText().parseLong() < now().getTime() );       
-
+		// CreateDrop.createDropDB(); 
 	 }
 	 
 	 

@@ -26,24 +26,31 @@ service webservice_generated_syncDirtyObjects ( )
                 }
                 else
                 {
-                  if ( entity.version <= entities.getJSONObject(count).getInt("version") )
+                  if ( entity.mayModifySynchronize() )
                   {
-                    mapperEditedProject(entity, entities.getJSONObject(count), localErrors);
-                    var exceptions := entity.validateSave() ;
-                    addValidateExceptionsToErrors(exceptions, localErrors);
-                    if ( containsErrorInJSONArray(localErrors) )
+                    if ( entity.version <= entities.getJSONObject(count).getInt("version") )
                     {
-                      rollbackAndStartNewTransaction();
+                      mapperEditedProject(entity, entities.getJSONObject(count), localErrors);
+                      var exceptions := entity.validateSave() ;
+                      addValidateExceptionsToErrors(exceptions, localErrors);
+                      if ( containsErrorInJSONArray(localErrors) )
+                      {
+                        rollbackAndStartNewTransaction();
+                      }
+                      else
+                      {
+                        var uncheckedExceptions := commitAndStartNewTransaction() ;
+                        addValidationExceptionsToLocalErrors(uncheckedExceptions, localErrors);
+                      }
                     }
                     else
                     {
-                      var uncheckedExceptions := commitAndStartNewTransaction() ;
-                      addValidationExceptionsToLocalErrors(uncheckedExceptions, localErrors);
+                      localErrors.put(makeJSONErrorObject("Object already has newer version", "warning"));
                     }
                   }
                   else
                   {
-                    localErrors.put(makeJSONErrorObject("Object already has newer version", "warning"));
+                    localErrors.put(makeJSONErrorObject("No rights to modify this object", "warning"));
                   }
                 }
                 if ( localErrors.length() > 0 )
@@ -72,24 +79,31 @@ service webservice_generated_syncDirtyObjects ( )
                   }
                   else
                   {
-                    if ( entity.version <= entities.getJSONObject(count).getInt("version") )
+                    if ( entity.mayModifySynchronize() )
                     {
-                      mapperEditedIssue(entity, entities.getJSONObject(count), localErrors);
-                      var exceptions := entity.validateSave() ;
-                      addValidateExceptionsToErrors(exceptions, localErrors);
-                      if ( containsErrorInJSONArray(localErrors) )
+                      if ( entity.version <= entities.getJSONObject(count).getInt("version") )
                       {
-                        rollbackAndStartNewTransaction();
+                        mapperEditedIssue(entity, entities.getJSONObject(count), localErrors);
+                        var exceptions := entity.validateSave() ;
+                        addValidateExceptionsToErrors(exceptions, localErrors);
+                        if ( containsErrorInJSONArray(localErrors) )
+                        {
+                          rollbackAndStartNewTransaction();
+                        }
+                        else
+                        {
+                          var uncheckedExceptions := commitAndStartNewTransaction() ;
+                          addValidationExceptionsToLocalErrors(uncheckedExceptions, localErrors);
+                        }
                       }
                       else
                       {
-                        var uncheckedExceptions := commitAndStartNewTransaction() ;
-                        addValidationExceptionsToLocalErrors(uncheckedExceptions, localErrors);
+                        localErrors.put(makeJSONErrorObject("Object already has newer version", "warning"));
                       }
                     }
                     else
                     {
-                      localErrors.put(makeJSONErrorObject("Object already has newer version", "warning"));
+                      localErrors.put(makeJSONErrorObject("No rights to modify this object", "warning"));
                     }
                   }
                   if ( localErrors.length() > 0 )
@@ -118,24 +132,31 @@ service webservice_generated_syncDirtyObjects ( )
                     }
                     else
                     {
-                      if ( entity.version <= entities.getJSONObject(count).getInt("version") )
+                      if ( entity.mayModifySynchronize() )
                       {
-                        mapperEditedTestValidation(entity, entities.getJSONObject(count), localErrors);
-                        var exceptions := entity.validateSave() ;
-                        addValidateExceptionsToErrors(exceptions, localErrors);
-                        if ( containsErrorInJSONArray(localErrors) )
+                        if ( entity.version <= entities.getJSONObject(count).getInt("version") )
                         {
-                          rollbackAndStartNewTransaction();
+                          mapperEditedTestValidation(entity, entities.getJSONObject(count), localErrors);
+                          var exceptions := entity.validateSave() ;
+                          addValidateExceptionsToErrors(exceptions, localErrors);
+                          if ( containsErrorInJSONArray(localErrors) )
+                          {
+                            rollbackAndStartNewTransaction();
+                          }
+                          else
+                          {
+                            var uncheckedExceptions := commitAndStartNewTransaction() ;
+                            addValidationExceptionsToLocalErrors(uncheckedExceptions, localErrors);
+                          }
                         }
                         else
                         {
-                          var uncheckedExceptions := commitAndStartNewTransaction() ;
-                          addValidationExceptionsToLocalErrors(uncheckedExceptions, localErrors);
+                          localErrors.put(makeJSONErrorObject("Object already has newer version", "warning"));
                         }
                       }
                       else
                       {
-                        localErrors.put(makeJSONErrorObject("Object already has newer version", "warning"));
+                        localErrors.put(makeJSONErrorObject("No rights to modify this object", "warning"));
                       }
                     }
                     if ( localErrors.length() > 0 )
@@ -164,24 +185,31 @@ service webservice_generated_syncDirtyObjects ( )
                       }
                       else
                       {
-                        if ( entity.version <= entities.getJSONObject(count).getInt("version") )
+                        if ( entity.mayModifySynchronize() )
                         {
-                          mapperEditedPerson(entity, entities.getJSONObject(count), localErrors);
-                          var exceptions := entity.validateSave() ;
-                          addValidateExceptionsToErrors(exceptions, localErrors);
-                          if ( containsErrorInJSONArray(localErrors) )
+                          if ( entity.version <= entities.getJSONObject(count).getInt("version") )
                           {
-                            rollbackAndStartNewTransaction();
+                            mapperEditedPerson(entity, entities.getJSONObject(count), localErrors);
+                            var exceptions := entity.validateSave() ;
+                            addValidateExceptionsToErrors(exceptions, localErrors);
+                            if ( containsErrorInJSONArray(localErrors) )
+                            {
+                              rollbackAndStartNewTransaction();
+                            }
+                            else
+                            {
+                              var uncheckedExceptions := commitAndStartNewTransaction() ;
+                              addValidationExceptionsToLocalErrors(uncheckedExceptions, localErrors);
+                            }
                           }
                           else
                           {
-                            var uncheckedExceptions := commitAndStartNewTransaction() ;
-                            addValidationExceptionsToLocalErrors(uncheckedExceptions, localErrors);
+                            localErrors.put(makeJSONErrorObject("Object already has newer version", "warning"));
                           }
                         }
                         else
                         {
-                          localErrors.put(makeJSONErrorObject("Object already has newer version", "warning"));
+                          localErrors.put(makeJSONErrorObject("No rights to modify this object", "warning"));
                         }
                       }
                       if ( localErrors.length() > 0 )
@@ -210,24 +238,31 @@ service webservice_generated_syncDirtyObjects ( )
                         }
                         else
                         {
-                          if ( entity.version <= entities.getJSONObject(count).getInt("version") )
+                          if ( entity.mayModifySynchronize() )
                           {
-                            mapperEditedPlace(entity, entities.getJSONObject(count), localErrors);
-                            var exceptions := entity.validateSave() ;
-                            addValidateExceptionsToErrors(exceptions, localErrors);
-                            if ( containsErrorInJSONArray(localErrors) )
+                            if ( entity.version <= entities.getJSONObject(count).getInt("version") )
                             {
-                              rollbackAndStartNewTransaction();
+                              mapperEditedPlace(entity, entities.getJSONObject(count), localErrors);
+                              var exceptions := entity.validateSave() ;
+                              addValidateExceptionsToErrors(exceptions, localErrors);
+                              if ( containsErrorInJSONArray(localErrors) )
+                              {
+                                rollbackAndStartNewTransaction();
+                              }
+                              else
+                              {
+                                var uncheckedExceptions := commitAndStartNewTransaction() ;
+                                addValidationExceptionsToLocalErrors(uncheckedExceptions, localErrors);
+                              }
                             }
                             else
                             {
-                              var uncheckedExceptions := commitAndStartNewTransaction() ;
-                              addValidationExceptionsToLocalErrors(uncheckedExceptions, localErrors);
+                              localErrors.put(makeJSONErrorObject("Object already has newer version", "warning"));
                             }
                           }
                           else
                           {
-                            localErrors.put(makeJSONErrorObject("Object already has newer version", "warning"));
+                            localErrors.put(makeJSONErrorObject("No rights to modify this object", "warning"));
                           }
                         }
                         if ( localErrors.length() > 0 )

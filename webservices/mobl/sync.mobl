@@ -1,7 +1,6 @@
 module webservices::mobl::sync
   import webservices :: mobl :: mapper
   import webservices :: mobl :: model
-  import webservices :: mobl :: unsync
   import webservices :: mobl :: simpleView
   service Sync {
     resource sendNew ( arg : [ JSON ] ) : JSON {
@@ -114,19 +113,19 @@ module webservices::mobl::sync
   function syncEdits ( ) : JSON {
     setSyncFlag(true);
     var array : [ JSON ] = [ ] ;
-    var value = Project . all ( ) . filter ( "dirty" , "=" , true ) . filter ( "new" , "=" , false ) . selectJSON ( [ "*" ] ) ;
+    var value = Project . all ( ) . filter ( "dirty" , "=" , true ) . filter ( "new" , "=" , false ) . filter ( "sync" , "=" , true ) . filter ( "version" , "!=" , 0 ) . selectJSON ( [ "*" ] ) ;
     var json = Dynamic ( name = "Project" , value = value ) ;
     array . push ( json );
-    var value = Issue . all ( ) . filter ( "dirty" , "=" , true ) . filter ( "new" , "=" , false ) . selectJSON ( [ "*" ] ) ;
+    var value = Issue . all ( ) . filter ( "dirty" , "=" , true ) . filter ( "new" , "=" , false ) . filter ( "sync" , "=" , true ) . filter ( "version" , "!=" , 0 ) . selectJSON ( [ "*" ] ) ;
     var json = Dynamic ( name = "Issue" , value = value ) ;
     array . push ( json );
-    var value = TestValidation . all ( ) . filter ( "dirty" , "=" , true ) . filter ( "new" , "=" , false ) . selectJSON ( [ "*" ] ) ;
+    var value = TestValidation . all ( ) . filter ( "dirty" , "=" , true ) . filter ( "new" , "=" , false ) . filter ( "sync" , "=" , true ) . filter ( "version" , "!=" , 0 ) . selectJSON ( [ "*" ] ) ;
     var json = Dynamic ( name = "TestValidation" , value = value ) ;
     array . push ( json );
     var value = Person . all ( ) . filter ( "dirty" , "=" , true ) . filter ( "new" , "=" , false ) . filter ( "version" , "!=" , 0 ) . selectJSON ( [ "*" ] ) ;
     var json = Dynamic ( name = "Person" , value = value ) ;
     array . push ( json );
-    var value = Place . all ( ) . filter ( "dirty" , "=" , true ) . filter ( "new" , "=" , false ) . selectJSON ( [ "*" ] ) ;
+    var value = Place . all ( ) . filter ( "dirty" , "=" , true ) . filter ( "new" , "=" , false ) . filter ( "sync" , "=" , true ) . filter ( "version" , "!=" , 0 ) . selectJSON ( [ "*" ] ) ;
     var json = Dynamic ( name = "Place" , value = value ) ;
     array . push ( json );
     var errors = Sync . sendEdits ( array ) ;
@@ -136,19 +135,19 @@ module webservices::mobl::sync
   function syncNew ( ) : JSON {
     setSyncFlag(true);
     var array : [ JSON ] = [ ] ;
-    var value = Project . all ( ) . filter ( "new" , "=" , true ) . selectJSON ( [ "*" ] ) ;
+    var value = Project . all ( ) . filter ( "new" , "=" , true ) . filter ( "sync" , "=" , true ) . selectJSON ( [ "*" ] ) ;
     var json = Dynamic ( name = "Project" , value = value ) ;
     array . push ( json );
-    var value = Issue . all ( ) . filter ( "new" , "=" , true ) . selectJSON ( [ "*" ] ) ;
+    var value = Issue . all ( ) . filter ( "new" , "=" , true ) . filter ( "sync" , "=" , true ) . selectJSON ( [ "*" ] ) ;
     var json = Dynamic ( name = "Issue" , value = value ) ;
     array . push ( json );
-    var value = TestValidation . all ( ) . filter ( "new" , "=" , true ) . selectJSON ( [ "*" ] ) ;
+    var value = TestValidation . all ( ) . filter ( "new" , "=" , true ) . filter ( "sync" , "=" , true ) . selectJSON ( [ "*" ] ) ;
     var json = Dynamic ( name = "TestValidation" , value = value ) ;
     array . push ( json );
     var value = Person . all ( ) . filter ( "new" , "=" , true ) . filter ( "sync" , "=" , true ) . selectJSON ( [ "*" ] ) ;
     var json = Dynamic ( name = "Person" , value = value ) ;
     array . push ( json );
-    var value = Place . all ( ) . filter ( "new" , "=" , true ) . selectJSON ( [ "*" ] ) ;
+    var value = Place . all ( ) . filter ( "new" , "=" , true ) . filter ( "sync" , "=" , true ) . selectJSON ( [ "*" ] ) ;
     var json = Dynamic ( name = "Place" , value = value ) ;
     array . push ( json );
     var errors = Sync . sendNew ( array ) ;
@@ -219,21 +218,33 @@ module webservices::mobl::sync
     {
       Project . fromSelectJSON ( ent );
     }
-    if ( type == "Issue" )
+    else
     {
-      Issue . fromSelectJSON ( ent );
-    }
-    if ( type == "TestValidation" )
-    {
-      TestValidation . fromSelectJSON ( ent );
-    }
-    if ( type == "Person" )
-    {
-      Person . fromSelectJSON ( ent );
-    }
-    if ( type == "Place" )
-    {
-      Place . fromSelectJSON ( ent );
+      if ( type == "Issue" )
+      {
+        Issue . fromSelectJSON ( ent );
+      }
+      else
+      {
+        if ( type == "TestValidation" )
+        {
+          TestValidation . fromSelectJSON ( ent );
+        }
+        else
+        {
+          if ( type == "Person" )
+          {
+            Person . fromSelectJSON ( ent );
+          }
+          else
+          {
+            if ( type == "Place" )
+            {
+              Place . fromSelectJSON ( ent );
+            }
+          }
+        }
+      }
     }
   }
   function getTopEntitiesObjects ( ) : [ JSON ] {

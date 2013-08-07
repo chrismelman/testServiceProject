@@ -19,11 +19,11 @@ service webservice_generated_syncPerson ( )
               var timestamp := JSONEntList.getJSONObject(innercount).getLong("lastSynced") ;
               if ( tl != null && timestamp != null )
               {
-                for ( ent : Person in getAllPersonForTopEntity(tl) where timestamp == 0 || ent.modified != null && ent.modified.getTime() > timestamp )
+                for ( ent : Person in getAllPersonForTopEntity(tl) where timestamp == 0 || ent.modified != null && ent.modified.getTime() > timestamp && ent.mayReadSynchronize() )
                   {
                     result.put(addDirtyFalse(ent.toJSON()));
                   }
-                for ( ent : User in getAllUserForTopEntity(tl) where timestamp == 0 || ent.modified != null && ent.modified.getTime() > timestamp )
+                for ( ent : User in getAllUserForTopEntity(tl) where timestamp == 0 || ent.modified != null && ent.modified.getTime() > timestamp && ent.mayReadSynchronize() )
                   {
                     result.put(addDirtyFalse(ent.toJSON()));
                   }
@@ -44,6 +44,7 @@ service webservice_generated_syncPerson ( )
   {
     errors.put("not valid parameter format");
   }
+  log("number of entities for syncPerson: " + result.length());
   json.put("errors", errors);
   json.put("result", result);
   return json;

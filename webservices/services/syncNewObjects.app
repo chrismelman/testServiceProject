@@ -17,28 +17,12 @@ service webservice_generated_syncNewObjects ( )
         {
           if ( kind == "Project" )
           {
-            for ( count : Int from 0 to entities.length() )
-              {
-                var localErrors := JSONArray() ;
-                var entity := Project{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
-                if ( entity != null )
-                {
-                  entity.save();
-                }
-                else
-                {
-                  errors.put("object has no id");
-                }
-              }
-          }
-          else
-          {
-            if ( kind == "Issue" )
+            if ( Project.mayCreateSynchronize() )
             {
               for ( count : Int from 0 to entities.length() )
                 {
                   var localErrors := JSONArray() ;
-                  var entity := Issue{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
+                  var entity := Project{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
                   if ( entity != null )
                   {
                     entity.save();
@@ -51,12 +35,19 @@ service webservice_generated_syncNewObjects ( )
             }
             else
             {
-              if ( kind == "TestValidation" )
+              errors.put("not allowed to create Project");
+            }
+          }
+          else
+          {
+            if ( kind == "Issue" )
+            {
+              if ( Issue.mayCreateSynchronize() )
               {
                 for ( count : Int from 0 to entities.length() )
                   {
                     var localErrors := JSONArray() ;
-                    var entity := TestValidation{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
+                    var entity := Issue{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
                     if ( entity != null )
                     {
                       entity.save();
@@ -69,35 +60,19 @@ service webservice_generated_syncNewObjects ( )
               }
               else
               {
-                if ( kind == "Person" )
+                errors.put("not allowed to create Issue");
+              }
+            }
+            else
+            {
+              if ( kind == "TestValidation" )
+              {
+                if ( TestValidation.mayCreateSynchronize() )
                 {
                   for ( count : Int from 0 to entities.length() )
                     {
                       var localErrors := JSONArray() ;
-                      var entity := ( null as Person ) ;
-                      var jsontemp := entities.getJSONObject(count) ;
-                      if ( jsontemp.has("typeField") && jsontemp.getString("typeField") != null )
-                      {
-                        var subtype := jsontemp.getString("typeField") ;
-                        if ( subtype == "Person" )
-                        {
-                          entity := Person{id := entities.getJSONObject(count).getString("id").parseUUID()};
-                        }
-                        else
-                        {
-                          if ( subtype == "User" )
-                          {
-                            entity := User{id := entities.getJSONObject(count).getString("id").parseUUID()};
-                          }
-                          else
-                          {
-                          }
-                        }
-                      }
-                      else
-                      {
-                        errors.put("object has no typefield");
-                      }
+                      var entity := TestValidation{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
                       if ( entity != null )
                       {
                         entity.save();
@@ -110,21 +85,84 @@ service webservice_generated_syncNewObjects ( )
                 }
                 else
                 {
+                  errors.put("not allowed to create TestValidation");
+                }
+              }
+              else
+              {
+                if ( kind == "Person" )
+                {
+                  if ( entities.length() > 0 )
+                  {
+                    if ( Person.mayCreateSynchronize() )
+                    {
+                      for ( count : Int from 0 to entities.length() )
+                        {
+                          var localErrors := JSONArray() ;
+                          var entity := ( null as Person ) ;
+                          var jsontemp := entities.getJSONObject(count) ;
+                          if ( jsontemp.has("typeField") && jsontemp.getString("typeField") != null )
+                          {
+                            var subtype := jsontemp.getString("typeField") ;
+                            if ( subtype == "Person" )
+                            {
+                              entity := Person{id := entities.getJSONObject(count).getString("id").parseUUID()};
+                            }
+                            else
+                            {
+                              if ( subtype == "User" )
+                              {
+                                entity := User{id := entities.getJSONObject(count).getString("id").parseUUID()};
+                              }
+                              else
+                              {
+                              }
+                            }
+                          }
+                          else
+                          {
+                            errors.put("object has no typefield");
+                          }
+                          if ( entity != null )
+                          {
+                            entity.save();
+                          }
+                          else
+                          {
+                            errors.put("object has no id");
+                          }
+                        }
+                    }
+                    else
+                    {
+                      errors.put("not allowed to create Person");
+                    }
+                  }
+                }
+                else
+                {
                   if ( kind == "Place" )
                   {
-                    for ( count : Int from 0 to entities.length() )
-                      {
-                        var localErrors := JSONArray() ;
-                        var entity := Place{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
-                        if ( entity != null )
+                    if ( Place.mayCreateSynchronize() )
+                    {
+                      for ( count : Int from 0 to entities.length() )
                         {
-                          entity.save();
+                          var localErrors := JSONArray() ;
+                          var entity := Place{id := entities.getJSONObject(count).getString("id").parseUUID()} ;
+                          if ( entity != null )
+                          {
+                            entity.save();
+                          }
+                          else
+                          {
+                            errors.put("object has no id");
+                          }
                         }
-                        else
-                        {
-                          errors.put("object has no id");
-                        }
-                      }
+                    }
+                    else
+                    {
+                      errors.put("not allowed to create Place");
+                    }
                   }
                   else
                   {
@@ -149,131 +187,146 @@ service webservice_generated_syncNewObjects ( )
         {
           if ( kind == "Project" )
           {
-            for ( count : Int from 0 to entities.length() )
-              {
-                var localErrors := JSONArray() ;
-                var entity := ( loadEntity("Project", entities.getJSONObject(count).getString("id").parseUUID()) as Project ) ;
-                if ( entity == null )
-                {
-                  localErrors.put(makeJSONErrorObject("Object does not exist", "warning"));
-                }
-                else
-                {
-                  mapperNewProject(entity, entities.getJSONObject(count), localErrors);
-                  var exceptions := entity.validateSave() ;
-                  addValidateExceptionsToErrors(exceptions, localErrors);
-                }
-                if ( localErrors.length() > 0 )
-                {
-                  rollback := true;
-                  var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Project", entities.getJSONObject(count).getString("id")) ;
-                  errors.put(jsonErrorObject);
-                }
-              }
-          }
-          else
-          {
-            if ( kind == "Issue" )
+            if ( Project.mayCreateSynchronize() )
             {
               for ( count : Int from 0 to entities.length() )
                 {
                   var localErrors := JSONArray() ;
-                  var entity := ( loadEntity("Issue", entities.getJSONObject(count).getString("id").parseUUID()) as Issue ) ;
+                  var entity := ( loadEntity("Project", entities.getJSONObject(count).getString("id").parseUUID()) as Project ) ;
                   if ( entity == null )
                   {
                     localErrors.put(makeJSONErrorObject("Object does not exist", "warning"));
                   }
                   else
                   {
-                    mapperNewIssue(entity, entities.getJSONObject(count), localErrors);
+                    mapperNewProject(entity, entities.getJSONObject(count), localErrors);
                     var exceptions := entity.validateSave() ;
                     addValidateExceptionsToErrors(exceptions, localErrors);
                   }
                   if ( localErrors.length() > 0 )
                   {
                     rollback := true;
-                    var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Issue", entities.getJSONObject(count).getString("id")) ;
+                    var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Project", entities.getJSONObject(count).getString("id")) ;
                     errors.put(jsonErrorObject);
                   }
                 }
             }
-            else
+          }
+          else
+          {
+            if ( kind == "Issue" )
             {
-              if ( kind == "TestValidation" )
+              if ( Issue.mayCreateSynchronize() )
               {
                 for ( count : Int from 0 to entities.length() )
                   {
                     var localErrors := JSONArray() ;
-                    var entity := ( loadEntity("TestValidation", entities.getJSONObject(count).getString("id").parseUUID()) as TestValidation ) ;
+                    var entity := ( loadEntity("Issue", entities.getJSONObject(count).getString("id").parseUUID()) as Issue ) ;
                     if ( entity == null )
                     {
                       localErrors.put(makeJSONErrorObject("Object does not exist", "warning"));
                     }
                     else
                     {
-                      mapperNewTestValidation(entity, entities.getJSONObject(count), localErrors);
+                      mapperNewIssue(entity, entities.getJSONObject(count), localErrors);
                       var exceptions := entity.validateSave() ;
                       addValidateExceptionsToErrors(exceptions, localErrors);
                     }
                     if ( localErrors.length() > 0 )
                     {
                       rollback := true;
-                      var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "TestValidation", entities.getJSONObject(count).getString("id")) ;
+                      var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Issue", entities.getJSONObject(count).getString("id")) ;
                       errors.put(jsonErrorObject);
                     }
                   }
               }
-              else
+            }
+            else
+            {
+              if ( kind == "TestValidation" )
               {
-                if ( kind == "Person" )
+                if ( TestValidation.mayCreateSynchronize() )
                 {
                   for ( count : Int from 0 to entities.length() )
                     {
                       var localErrors := JSONArray() ;
-                      var entity := ( loadEntity("Person", entities.getJSONObject(count).getString("id").parseUUID()) as Person ) ;
+                      var entity := ( loadEntity("TestValidation", entities.getJSONObject(count).getString("id").parseUUID()) as TestValidation ) ;
                       if ( entity == null )
                       {
                         localErrors.put(makeJSONErrorObject("Object does not exist", "warning"));
                       }
                       else
                       {
-                        mapperNewPerson(entity, entities.getJSONObject(count), localErrors);
+                        mapperNewTestValidation(entity, entities.getJSONObject(count), localErrors);
                         var exceptions := entity.validateSave() ;
                         addValidateExceptionsToErrors(exceptions, localErrors);
                       }
                       if ( localErrors.length() > 0 )
                       {
                         rollback := true;
-                        var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Person", entities.getJSONObject(count).getString("id")) ;
+                        var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "TestValidation", entities.getJSONObject(count).getString("id")) ;
                         errors.put(jsonErrorObject);
                       }
                     }
                 }
-                else
+              }
+              else
+              {
+                if ( kind == "Person" )
                 {
-                  if ( kind == "Place" )
+                  if ( Person.mayCreateSynchronize() )
                   {
                     for ( count : Int from 0 to entities.length() )
                       {
                         var localErrors := JSONArray() ;
-                        var entity := ( loadEntity("Place", entities.getJSONObject(count).getString("id").parseUUID()) as Place ) ;
+                        var entity := ( loadEntity("Person", entities.getJSONObject(count).getString("id").parseUUID()) as Person ) ;
                         if ( entity == null )
                         {
                           localErrors.put(makeJSONErrorObject("Object does not exist", "warning"));
                         }
                         else
                         {
-                          mapperNewPlace(entity, entities.getJSONObject(count), localErrors);
+                          mapperNewPerson(entity, entities.getJSONObject(count), localErrors);
                           var exceptions := entity.validateSave() ;
                           addValidateExceptionsToErrors(exceptions, localErrors);
                         }
                         if ( localErrors.length() > 0 )
                         {
                           rollback := true;
-                          var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Place", entities.getJSONObject(count).getString("id")) ;
+                          var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Person", entities.getJSONObject(count).getString("id")) ;
                           errors.put(jsonErrorObject);
                         }
                       }
+                  }
+                }
+                else
+                {
+                  if ( kind == "Place" )
+                  {
+                    if ( Place.mayCreateSynchronize() )
+                    {
+                      for ( count : Int from 0 to entities.length() )
+                        {
+                          var localErrors := JSONArray() ;
+                          var entity := ( loadEntity("Place", entities.getJSONObject(count).getString("id").parseUUID()) as Place ) ;
+                          if ( entity == null )
+                          {
+                            localErrors.put(makeJSONErrorObject("Object does not exist", "warning"));
+                          }
+                          else
+                          {
+                            mapperNewPlace(entity, entities.getJSONObject(count), localErrors);
+                            var exceptions := entity.validateSave() ;
+                            addValidateExceptionsToErrors(exceptions, localErrors);
+                          }
+                          if ( localErrors.length() > 0 )
+                          {
+                            rollback := true;
+                            var jsonErrorObject := makeJSONEntityErrorObject(localErrors, "Place", entities.getJSONObject(count).getString("id")) ;
+                            errors.put(jsonErrorObject);
+                          }
+                        }
+                    }
                   }
                   else
                   {

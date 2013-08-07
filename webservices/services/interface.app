@@ -10,6 +10,7 @@ imports webservices/services/syncProject
 imports webservices/services/syncTestValidation
 imports webservices/services/test
 imports webservices/related-entities/main
+imports webservices/access-control/main
 imports webservices/mappers/main
 imports webservices/json/main
 native class DispatchServletHelper as DispatchServletHelper : DispatchServlet

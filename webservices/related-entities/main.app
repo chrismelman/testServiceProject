@@ -39,13 +39,13 @@ function getRelatedEntities ( ent : Entity ) : Set<Entity>
   {
     return ( ent as Issue ).getRelatedEntities();
   }
-  if ( type == "TestValidation" )
-  {
-    return ( ent as TestValidation ).getRelatedEntities();
-  }
   if ( type == "User" )
   {
     return ( ent as User ).getRelatedEntities();
+  }
+  if ( type == "TestValidation" )
+  {
+    return ( ent as TestValidation ).getRelatedEntities();
   }
   if ( type == "Person" )
   {
@@ -113,34 +113,6 @@ function getAllIssueForTopEntity ( tl : Entity ) : Set<Issue>
     }
   return found;
 }
-function getAllTestValidationForTopEntity ( tl : Entity ) : Set<TestValidation>
-{
-  if ( tl.getTypeString() == "TestValidation" )
-  {
-    return {( tl as TestValidation )};
-  }
-  var todo := Set<Entity>() ;
-  var seen := Set<UUID>() ;
-  var found := Set<TestValidation>() ;
-  todo.addAll(getSetWhereNotSeen(todo, seen, getRelatedEntities(tl)));
-  while ( todo.length > 0 )
-    {
-      var newTodo := Set<Entity>() ;
-      for ( ent : Entity in todo where ent != null )
-        {
-          if ( ! isTopLevelEntity(ent) )
-          {
-            if ( ent.getTypeString() == "TestValidation" )
-            {
-              found.add(( ent as TestValidation ));
-            }
-            newTodo.addAll(getSetWhereNotSeen(todo, seen, getRelatedEntities(ent)));
-          }
-        }
-      todo := newTodo;
-    }
-  return found;
-}
 function getAllUserForTopEntity ( tl : Entity ) : Set<User>
 {
   if ( tl.getTypeString() == "User" )
@@ -161,6 +133,34 @@ function getAllUserForTopEntity ( tl : Entity ) : Set<User>
             if ( ent.getTypeString() == "User" )
             {
               found.add(( ent as User ));
+            }
+            newTodo.addAll(getSetWhereNotSeen(todo, seen, getRelatedEntities(ent)));
+          }
+        }
+      todo := newTodo;
+    }
+  return found;
+}
+function getAllTestValidationForTopEntity ( tl : Entity ) : Set<TestValidation>
+{
+  if ( tl.getTypeString() == "TestValidation" )
+  {
+    return {( tl as TestValidation )};
+  }
+  var todo := Set<Entity>() ;
+  var seen := Set<UUID>() ;
+  var found := Set<TestValidation>() ;
+  todo.addAll(getSetWhereNotSeen(todo, seen, getRelatedEntities(tl)));
+  while ( todo.length > 0 )
+    {
+      var newTodo := Set<Entity>() ;
+      for ( ent : Entity in todo where ent != null )
+        {
+          if ( ! isTopLevelEntity(ent) )
+          {
+            if ( ent.getTypeString() == "TestValidation" )
+            {
+              found.add(( ent as TestValidation ));
             }
             newTodo.addAll(getSetWhereNotSeen(todo, seen, getRelatedEntities(ent)));
           }
