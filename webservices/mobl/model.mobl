@@ -27,7 +27,6 @@ module webservices::mobl::model
     typeField : String
     lastSynced : Num
     sync : Bool
-    Person_name : String
     User_place : Place
   }
   entity Place {

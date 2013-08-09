@@ -198,7 +198,6 @@ module webservices::mobl::simpleView
       showTextField ( "typeField" , ent . typeField )
       showNumField ( "lastSynced" , ent . lastSynced )
       showBoolField ( "sync" , ent . sync )
-      showTextField ( "Person_name" , ent . Person_name )
       showEntityField ( "User_place" , ent . User_place , showPlaceSimple )
     }
   }

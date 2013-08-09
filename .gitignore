@@ -6,3 +6,8 @@
 .dependencies.webdsl
 temp_test.db
 application.ini
+testRestrictedProperties/.classpath
+testRestrictedProperties/.project
+testRestrictedProperties/.servletapp/*
+testRestrictedProperties/.webdsl-fragment-cache/*
+testRestrictedProperties/.webdsl-parsecache/*

@@ -23,9 +23,9 @@ extend entity Project {
     else
     {
       var arrayissues := JSONArray() ;
-      for ( v_137256 : Issue in this.issues )
+      for ( w_73053 : Issue in this.issues )
         {
-          arrayissues.put(makeJSONObjectFromEntityRef(v_137256));
+          arrayissues.put(makeJSONObjectFromEntityRef(w_73053));
         }
       object.put("issues", arrayissues);
     }

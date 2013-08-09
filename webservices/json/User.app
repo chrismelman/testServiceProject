@@ -5,7 +5,7 @@ extend entity User {
     var object := JSONObject() ;
     if ( this.name != null )
     {
-      object.put("Person_name", name);
+      object.put("name", name);
     }
     if ( this.id != null )
     {
@@ -19,11 +19,11 @@ extend entity User {
     var object := JSONObject() ;
     if ( this.name == null )
     {
-      object.put("Person_name", ( null as JSONObject ));
+      object.put("name", ( null as JSONObject ));
     }
     else
     {
-      object.put("Person_name", this.name);
+      object.put("name", this.name);
     }
     if ( this.place == null )
     {
@@ -70,11 +70,11 @@ extend entity User {
     var object := JSONObject() ;
     if ( this.name == null )
     {
-      object.put("Person_name", ( null as JSONObject ));
+      object.put("name", ( null as JSONObject ));
     }
     else
     {
-      object.put("Person_name", this.name);
+      object.put("name", this.name);
     }
     if ( this.version == null )
     {

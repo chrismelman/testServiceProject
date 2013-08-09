@@ -117,7 +117,7 @@ native class mine.test.CreateDropTest as CreateDrop{
 		}	
 		action testNewObjectLinked() {		
 		 	runscript(
-			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncNewObjects',  	data: \\\"[{ name : 'Person', value : [{ id : '9c5bdf50-850a-11e2-9e96-0800200c9a66', typeField : 'User', Person_name : 'p5', version : 2, User_place : {  id : '15b0f6d1-5101-4126-9444-6037d890307c' }}]}, { name : 'Place', value : [{id : '15b0f6d1-5101-4126-9444-6037d890307c', version : 2, name : 'place99'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
+			 		"$.ajax({  type: 'PUT',  	url: '/testServicesProject/webservice/syncNewObjects',  	data: \\\"[{ name : 'Person', value : [{ id : '9c5bdf50-850a-11e2-9e96-0800200c9a66', typeField : 'User', version : 2, name : 'p5' , User_place : {  id : '15b0f6d1-5101-4126-9444-6037d890307c' }}]}, { name : 'Place', value : [{id : '15b0f6d1-5101-4126-9444-6037d890307c', version : 2, name : 'place99'}]}]\\\",  success: function(data) { console.log(data);  $('span#specialoutput').text(JSON.stringify(data))},  dataType: 'JSON'});");
 		}
 		action testNewObjectWrong() {		
 		 	runscript(
@@ -197,23 +197,32 @@ native class mine.test.CreateDropTest as CreateDrop{
 	entity Project {
 		name :: String
 		issues -> Set<Issue>
+		restricted :: String
 		
 		synchronization configuration {
 			toplevel name property :name
+			restricted properties: restricted
 		}
 	}
 	
 	entity Issue {
 		title :: String
 		project -> Project(inverse=Project.issues)
+		restricted -> Project
+		
+		synchronization configuration {
+			restricted properties: restricted
+		}
 	}
 	
 	
 	entity User : Person {
 		place -> Place
+		restricted :: Int
 		
 		synchronization configuration {
 			toplevel name property :name
+			restricted properties: restricted
 		}
 	}
 	
@@ -223,19 +232,31 @@ native class mine.test.CreateDropTest as CreateDrop{
 		testFloat :: Float
 		testBoolean :: Bool
 		testEmail :: Email 
+		restricted :: String
 		
 		synchronization configuration {
 			toplevel name property : testString
+			restricted properties: restricted
 		}
 		
 	}
 	
 	entity Person {
 		name :: String
+		restricted2 -> Person
+		
+		synchronization configuration {
+			restricted properties: restricted2
+		}
 	}
 	
 	entity Place {
 		name :: String
+		restricted3 -> Place
+		
+		synchronization configuration {
+			restricted properties: restricted3
+		}
 	}
 	
 	// derive webservices for Project , with nameproperty name
@@ -637,7 +658,7 @@ native class mine.test.CreateDropTest as CreateDrop{
 	 	var testbutton := d.findElements(SelectBy.id("test5"))[0]; 
 	 	testbutton.click();    
 	 	sleep(1000);
-	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[{\"id\":\"4752b4cb-87d0-4732-a517-8d6c213aa80a\",\"typeField\":\"User\",\"Person_name\":\"p2\",\"dirty\":\"false\",\"version\":2,\"User_place\":{\"id\":\"ac567323-1504-aa8c-b389-fd24672e9555\"}}],\"errors\":[]}");      
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[{\"id\":\"4752b4cb-87d0-4732-a517-8d6c213aa80a\",\"typeField\":\"User\",\"name\":\"p2\",\"dirty\":\"false\",\"version\":2,\"User_place\":{\"id\":\"ac567323-1504-aa8c-b389-fd24672e9555\"}}],\"errors\":[]}");      
 	 	
 	 	var testbutton := d.findElements(SelectBy.id("test6"))[0]; 
 	 	testbutton.click();    
@@ -652,13 +673,11 @@ native class mine.test.CreateDropTest as CreateDrop{
 	 	var testbutton := d.findElements(SelectBy.id("test1"))[0];    
 	 	testbutton.click();    
 	 	sleep(1000);
-	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[{\"name\":\"Project\",\"value\":[{\"id\":\"7c17fc80-719f-45af-9dfc-c65ba2a72a08\",\"name\":\"test1\"},{\"id\":\"949a3d74-51fe-45d8-92ea-def66dc49e08\",\"name\":\"test2\"}]},{\"name\":\"User\",\"value\":[{\"id\":\"4752b4cb-87d0-4732-a517-8d6c213aa80a\",\"typeField\":\"User\",\"Person_name\":\"p2\"}]},{\"name\":\"TestValidation\",\"value\":[{\"id\":\"abbe67e0-7f80-11e2-9e96-0800200c9a66\",\"testEmail\":\"test@test.org\",\"testString\":\"test\",\"testInt\":1,\"testBoolean\":true,\"testFloat\":9.9}]}],\"errors\":[]}");       
+	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText() == "{\"result\":[{\"name\":\"Project\",\"value\":[{\"id\":\"7c17fc80-719f-45af-9dfc-c65ba2a72a08\",\"name\":\"test1\"},{\"id\":\"949a3d74-51fe-45d8-92ea-def66dc49e08\",\"name\":\"test2\"}]},{\"name\":\"User\",\"value\":[{\"id\":\"4752b4cb-87d0-4732-a517-8d6c213aa80a\",\"typeField\":\"User\",\"name\":\"p2\"}]},{\"name\":\"TestValidation\",\"value\":[{\"id\":\"abbe67e0-7f80-11e2-9e96-0800200c9a66\",\"testEmail\":\"test@test.org\",\"testString\":\"test\",\"testInt\":1,\"testBoolean\":true,\"testFloat\":9.9}]}],\"errors\":[]}");       
 	 	
 	 	var testbutton := d.findElements(SelectBy.id("test2"))[0];    
 	 	testbutton.click();   
 	 	assert(d.findElements(SelectBy.id("specialoutput"))[0].getText().parseLong() > 1360747929138L );       
  		assert(d.findElements(SelectBy.id("specialoutput"))[0].getText().parseLong() < now().getTime() );       
 		// CreateDrop.createDropDB(); 
-	 }
-	 
-	 
+	 }	 
